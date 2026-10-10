@@ -187,7 +187,7 @@ importers:
 
   packages/astro:
     dependencies:
-      '@askstatic/core':
+      '@mrgkanev/askstatic-core':
         specifier: workspace:*
         version: link:../core
       yaml:

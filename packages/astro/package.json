@@ -35,7 +35,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@askstatic/core": "workspace:*",
+    "@mrgkanev/askstatic-core": "workspace:*",
     "yaml": "^2.8.0",
     "zod": "^4.0.0"
   },
@@ -57,5 +57,15 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrGKanev/AskStatic.git",
+    "directory": "packages/astro"
+  },
+  "homepage": "https://github.com/MrGKanev/AskStatic#readme",
+  "bugs": {
+    "url": "https://github.com/MrGKanev/AskStatic/issues"
+  },
+  "author": "Gabriel Kanev"
 }

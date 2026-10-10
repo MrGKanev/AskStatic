@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Issue, validateKnowledge } from '@askstatic/core';
+import { type Issue, validateKnowledge } from '@mrgkanev/askstatic-core';
 import type { AstroIntegration } from 'astro';
 import { loadKnowledge } from './knowledge.ts';
 import { findBrokenSources } from './links.ts';

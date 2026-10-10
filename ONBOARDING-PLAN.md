@@ -25,7 +25,7 @@ Observed gap in that real site: the hand-written intent entries (pricing, contac
 
 ### 1.1 Command surface
 
-New package `packages/cli` (bin `askstatic`, depends on `@askstatic/core`, `yaml`, `zod`; prompts via `@clack/prompts`). Same code can be called from `npx astro add astro-integration-askstatic` follow-up message ("run `npx askstatic init`").
+New package `packages/cli` (bin `askstatic`, depends on `@mrgkanev/askstatic-core`, `yaml`, `zod`; prompts via `@clack/prompts`). Same code can be called from `npx astro add astro-integration-askstatic` follow-up message ("run `npx askstatic init`").
 
 ```
 npx astro add astro-integration-askstatic     # edits astro.config, installs
@@ -249,7 +249,7 @@ Consent: events contain visitor-typed text, so for GDPR the owner is the control
 `askstatic gaps [--since 30d] [--file .askstatic/events.jsonl|URL] [--min 2]`:
 
 1. Reads events (file, or `--from-webhook-export` for a JSONL dump the owner downloads).
-2. Normalises each query with `canonicalPhrase` (`@askstatic/core`) and groups identical and near-identical ones (same stemmed token set, or Jaccard >= 0.7).
+2. Normalises each query with `canonicalPhrase` (`@mrgkanev/askstatic-core`) and groups identical and near-identical ones (same stemmed token set, or Jaccard >= 0.7).
 3. Prints ranked clusters: count, example phrasings, reason mix, nearest existing entry (re-run `Engine.retrieve`) and its score.
 
 ```

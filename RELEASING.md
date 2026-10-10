@@ -4,7 +4,7 @@ Two packages are published, **core first**:
 
 | Package | Why |
 |---|---|
-| `@askstatic/core` | engine; the integration and the widget depend on it |
+| `@mrgkanev/askstatic-core` | engine; the integration and the widget depend on it |
 | `astro-integration-askstatic` | the Astro integration and `<AskStatic />` component |
 
 `pnpm publish` replaces `workspace:*` with the real version in the published `package.json` (verified with `pnpm pack`).
@@ -13,8 +13,8 @@ Two packages are published, **core first**:
 
 1. Log in: `npm login` (and enable 2FA on the account).
 2. The `@askstatic` scope must exist. Create the free org at <https://www.npmjs.com/org/create> (name `askstatic`).
-   - Do not want an org? Rename the core package to an unscoped name such as `askstatic-core` and update the imports (`rg "@askstatic/core"`).
-3. Both names were free on 2026-10-10 (`npm view astro-integration-askstatic` and `npm view @askstatic/core` returned 404). Re-check right before publishing.
+   - Do not want an org? Rename the core package to an unscoped name such as `askstatic-core` and update the imports (`rg "@mrgkanev/askstatic-core"`).
+3. Both names were free on 2026-10-10 (`npm view astro-integration-askstatic` and `npm view @mrgkanev/askstatic-core` returned 404). Re-check right before publishing.
 4. Add `repository`, `homepage` and `bugs` to both `package.json` files once the GitHub repo exists. That is what the npm page and the Astro integrations directory link to.
 
 ## Release checklist
@@ -31,11 +31,11 @@ pnpm typecheck && pnpm test && pnpm build && pnpm size && pnpm eval
 PW_CHANNEL=chrome pnpm e2e         # locally; CI uses Chromium
 
 # 3. look at what would be published
-pnpm --filter @askstatic/core publish --dry-run --no-git-checks
+pnpm --filter @mrgkanev/askstatic-core publish --dry-run --no-git-checks
 pnpm --filter astro-integration-askstatic publish --dry-run --no-git-checks
 
 # 4. publish, core first (add --otp=<code> if 2FA asks for it)
-pnpm --filter @askstatic/core publish --access public
+pnpm --filter @mrgkanev/askstatic-core publish --access public
 pnpm --filter astro-integration-askstatic publish --access public
 
 # 5. tag
@@ -55,7 +55,7 @@ The site uses pnpm's `minimumReleaseAge`, so a package published minutes ago is 
 ```yaml
 minimumReleaseAgeExclude:
   - astro-integration-askstatic@0.1.0
-  - "@askstatic/core@0.1.0"
+  - "@mrgkanev/askstatic-core@0.1.0"
 ```
 
 `pagefind` is an optional peer; the site already has it.

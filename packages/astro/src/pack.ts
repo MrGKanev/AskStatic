@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { type Entry, createEngine } from '@askstatic/core';
+import { type Entry, createEngine } from '@mrgkanev/askstatic-core';
 import type { ResolvedOptions } from './options.ts';
 
 export interface Pack {
