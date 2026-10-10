@@ -23,7 +23,7 @@ interface Stored {
 const STYLE = `
 :host { --a: var(--askstatic-accent, #2f5bea); --on-a: var(--askstatic-on-accent, #fff); --bg: var(--askstatic-bg, #fff); --fg: var(--askstatic-fg, #17191c);
   --muted: var(--askstatic-muted, #5c6370); --line: var(--askstatic-line, #e3e6ec); --soft: var(--askstatic-soft, #f3f4f7);
-  --r: var(--askstatic-radius, 20px); font: 15px/1.5 var(--askstatic-font, system-ui, -apple-system, "Segoe UI", sans-serif); color: var(--fg); -webkit-font-smoothing: antialiased; }
+  --r: var(--askstatic-radius, 20px); font: 14px/1.45 var(--askstatic-font, system-ui, -apple-system, "Segoe UI", sans-serif); color: var(--fg); -webkit-font-smoothing: antialiased; }
 @media (prefers-color-scheme: dark) { :host(:not([data-theme="light"])) { --a: var(--askstatic-accent, #8ea8ff); --on-a: var(--askstatic-on-accent, #0e1117); --bg: var(--askstatic-bg, #16181d);
   --fg: var(--askstatic-fg, #eceef2); --muted: var(--askstatic-muted, #a0a7b4); --line: var(--askstatic-line, #2b303a); --soft: var(--askstatic-soft, #232730); } }
 :host([data-theme="dark"]) { --a: var(--askstatic-accent, #8ea8ff); --on-a: var(--askstatic-on-accent, #0e1117); --bg: var(--askstatic-bg, #16181d); --fg: var(--askstatic-fg, #eceef2);
@@ -45,30 +45,30 @@ header { display: flex; align-items: center; gap: 12px; padding: 14px 10px 14px 
 .who b { font-weight: 650; font-size: 15px; line-height: 1.2; } .who small { color: var(--muted); font-size: 12.5px; line-height: 1.3; }
 .close { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 20px; }
 .close:hover { background: var(--soft); color: var(--fg); }
-.log { flex: 1; overflow-y: auto; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 14px; }
+.log { flex: 1; overflow-y: auto; padding: 12px 14px 6px; display: flex; flex-direction: column; gap: 10px; }
 .row { display: flex; align-items: flex-end; gap: 8px; max-width: 100%; }
 .row .avatar { width: 28px; height: 28px; font-size: 14px; }
 .row.user { justify-content: flex-end; }
 .bubbles { max-width: calc(100% - 38px); }
-.msg { max-width: 100%; padding: 10px 14px; border-radius: 18px 18px 18px 6px; background: var(--soft); overflow-wrap: anywhere; }
-.row.user .msg { max-width: 86%; background: var(--a); color: var(--on-a); border-radius: 18px 18px 6px 18px; }
+.msg { max-width: 100%; padding: 8px 12px; border-radius: 16px 16px 16px 5px; background: var(--soft); overflow-wrap: anywhere; }
+.row.user .msg { max-width: 86%; background: var(--a); color: var(--on-a); border-radius: 16px 16px 5px 16px; }
 .bubbles { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.msg p { margin: 0; } .msg p + p, .msg ul, .msg ol, .msg .chips, .msg .srcs, .msg .lead + p { margin-top: 8px; }
-.msg .lead { color: var(--muted); font-size: 13px; }
+.msg p { margin: 0; } .msg p + p, .msg ul, .msg ol, .msg .chips, .msg .srcs, .msg .lead + p { margin-top: 6px; }
+.msg .lead { color: var(--muted); font-size: 12.5px; }
 .msg ul, .msg ol { margin-bottom: 0; padding-left: 20px; } .msg li + li { margin-top: 4px; }
 .msg a { color: var(--a); } .msg code { padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--fg) 10%, transparent); font-size: .9em; }
-.label { margin: 10px 0 6px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; }
-.srcs { display: flex; flex-direction: column; gap: 6px; }
-.src { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--fg) !important; text-decoration: none; font-weight: 500; font-size: 14px; transition: border-color .15s, transform .15s; }
+.label { margin: 8px 0 4px; color: var(--muted); font-size: 11.5px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; }
+.srcs { display: flex; flex-direction: column; gap: 4px; }
+.src { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--fg) !important; text-decoration: none; font-weight: 500; font-size: 13.5px; line-height: 1.3; transition: border-color .15s, transform .15s; }
 .src:hover { border-color: var(--a); transform: translateX(2px); } .src svg { flex: none; color: var(--a); }
-.src span { min-width: 0; } .src small { display: block; margin-top: 1px; color: var(--muted); font-weight: 400; font-size: 12px; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { min-height: 44px; padding: 6px 14px; border: 1px solid color-mix(in srgb, var(--a) 40%, var(--line)); border-radius: 999px; background: var(--bg); color: var(--fg); font-size: 14px; font-weight: 500; transition: background .15s, border-color .15s; }
+.src span { min-width: 0; } .src small { display: block; margin-top: 0; color: var(--muted); font-weight: 400; font-size: 11.5px; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip { min-height: 32px; padding: 3px 12px; border: 1px solid color-mix(in srgb, var(--a) 40%, var(--line)); border-radius: 999px; background: var(--bg); color: var(--fg); font-size: 13px; font-weight: 500; line-height: 1.3; transition: background .15s, border-color .15s; }
 .chip:hover { border-color: var(--a); background: color-mix(in srgb, var(--a) 10%, var(--bg)); } .chip[disabled] { opacity: .5; cursor: default; }
-.starter { padding: 0 0 0 36px; } .starter .chips { margin: 0; }
+.starter { padding: 0 0 0 36px; margin-top: -4px; } .starter .chips { margin: 0; }
 .typing { display: flex; gap: 4px; padding: 14px 16px; } .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); opacity: .55; }
 .tools { display: flex; gap: 4px; padding: 0 12px 4px; }
-.tool { min-height: 44px; padding: 0 10px; border: 0; border-radius: 8px; background: none; color: var(--muted); font-size: 13px; }
+.tool { min-height: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: none; color: var(--muted); font-size: 13px; }
 .tool:hover { background: var(--soft); color: var(--fg); }
 form { display: flex; align-items: center; gap: 8px; margin: 8px 12px 6px; padding: 5px 5px 5px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); transition: border-color .15s, box-shadow .15s; }
 form:focus-within { border-color: var(--a); box-shadow: 0 0 0 3px color-mix(in srgb, var(--a) 22%, transparent); }
@@ -597,17 +597,26 @@ class AskStatic extends HTMLElement {
       return pf;
     });
     const pf = await this.pagefind;
-    const found = await pf.search(query);
-    const out = [];
-    for (const r of found.results.slice(0, 3)) {
+    // Search with the meaningful words only ("have you written about cloudflare" -> "cloudflare"), as the chat engine does.
+    const stop = this.engine?.lang.stopwords;
+    const words = query.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+    const meaningful = words.filter((w) => !stop?.has(w));
+    const found = await pf.search((meaningful.length ? meaningful : words).join(' '));
+    const scored: { title: string; href: string; excerpt: string; rank: number }[] = [];
+    for (const r of found.results.slice(0, 8)) {
       const d = await r.data();
       const href = safeHref(d.url);
       if (!href) continue;
-      // Pagefind excerpts contain <mark> markup; keep text only.
+      // Pagefind excerpts wrap matched words in <mark>; no <mark> means the page only matched weakly. Keep text only for display.
+      const marks = (String(d.excerpt ?? '').match(/<mark>/g) ?? []).length;
+      const title = d.meta?.title || d.url;
+      const titleHits = meaningful.filter((w) => title.toLowerCase().includes(w)).length;
+      if (!marks && !titleHits) continue;
       const excerpt = new DOMParser().parseFromString(d.excerpt ?? '', 'text/html').body.textContent ?? '';
-      out.push({ title: d.meta?.title || d.url, href, excerpt });
+      scored.push({ title, href, excerpt, rank: titleHits * 10 + Math.min(marks, 9) });
     }
-    return out;
+    // Stable sort: equal rank keeps Pagefind's own order.
+    return scored.sort((x, y) => y.rank - x.rank).slice(0, 3).map(({ title, href, excerpt }) => ({ title, href, excerpt }));
   }
 
   private tools(): HTMLElement {

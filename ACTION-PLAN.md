@@ -20,6 +20,19 @@ Eval (`pnpm eval`): EN 49/56, BG 36/39, 0 confident-wrong answers. These sets we
 
 Known gaps: no CI; Astro versions other than 7.3.8 untested; Pagefind fallback can return weak matches; widget has no automated a11y/E2E tests.
 
+## To-do (agreed 2026-10-11)
+
+Not started, in the order we want to do them. Details in `ONBOARDING-PLAN.md`.
+
+1. **Feedback loop for unanswered questions.** Capture questions that fell back or had low confidence (local by default, owner webhook as an opt-in), review them with a command, and turn a reviewed question into a new example question or entry in one step. This is what makes the vocabulary grow from real visitors instead of from guesses.
+2. **Offline LLM authoring helper (local script, never part of the site).** A command run by hand (e.g. `askstatic suggest`) that talks to a local model (Ollama) or an API key the owner provides and only *proposes*: new entries from site content, paraphrased example questions, synonym candidates, eval questions. Every proposal is reviewed and approved by a human before it is written; nothing is sent anywhere without a dry-run; unchanged pages are skipped by content hash. It cannot be fully unattended: answers are statements about the owner's business (prices, availability), and a model may invent them.
+3. **Real eval set.** Replace the author-written questions (`gkanev.com/src/askstatic/_eval/en.json`, `packages/astro/eval/`) with real visitor questions collected via item 1, and gate CI on it.
+4. **Cloudflare `Did you mean` quality, Bulgarian Pagefind quality, phone/screen-reader checks** (see Known gaps).
+
+## Matching quality (2026-10-11)
+
+Full study, method, rejected ideas and remaining miss types: `MATCHING-RESEARCH.md`. Latest: A 81.6% to 91.8%, held-out B 70.0% to 78.6%, confident-wrong 0 everywhere. Earlier note: **81.6% to 87.8% correct**, confident-wrong answers **2 to 0**, demo EN eval unchanged at 49/56, BG at 36/39. Changes: question-frame words (`kind`, `have`, `write`, ...) no longer count against coverage; a consistent stemmer (`price/pricing`, `code/coding`, possessives); build-time synonym groups applied only to entries that already use a word of the group; short topic queries offer "did you mean" (gap 0.35, chosen by measurement: 0.25 to 0.35 scored the same, 0.45 was worse); the site-search fallback searches the meaningful words and keeps only results with a real match. Run it: `node packages/astro/eval/run-site.ts <knowledgeDir> <questions.json>`.
+
 ## 1. Verified facts (checked 2026-10-10)
 
 | Item | Finding |

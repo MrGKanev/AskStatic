@@ -50,11 +50,21 @@ interface Doc {
 const FIELDS = ['title', 'questions', 'keywords', 'answer'] as const;
 const BOOST = { questions: 3, title: 2.5, keywords: 2, answer: 0.5 };
 
+/** Index (and search) "self-hosting" as itself and as "self" + "hosting", so "self host" finds it. Raw query tokens used for negation checks are not affected. */
+function tokenizeWithParts(text: string): string[] {
+  const out: string[] = [];
+  for (const t of tokenize(text)) {
+    out.push(t);
+    if (t.includes('-')) for (const part of t.split('-')) if (part.length >= 2) out.push(part);
+  }
+  return out;
+}
+
 function miniOptions(lang: LanguagePack) {
   return {
     fields: [...FIELDS],
     storeFields: [],
-    tokenize,
+    tokenize: tokenizeWithParts,
     processTerm: (t: string) => (lang.negations.has(t) ? t : lang.stem(t)),
   };
 }
@@ -140,8 +150,9 @@ export class Engine {
       const matched = new Set(r.queryTerms);
       const coverage = contentTerms.filter((t) => matched.has(t)).length / contentTerms.length;
       const own = this.termSets.get(entry.id) as Set<string>;
-      candidates.push({ entry, score: r.score, coverage, numbersOk: numbers.every((n) => own.has(n)) });
+      candidates.push({ entry, score: r.score * entry.weight, coverage, numbersOk: numbers.every((n) => own.has(n)) });
     }
+    candidates.sort((a, b) => b.score - a.score);
     return { exact, candidates, hasNegation, terms };
   }
 
@@ -160,12 +171,29 @@ function docText(e: Entry): string {
   return [e.title, ...e.questions, ...e.keywords, e.answer ?? ''].join(' ');
 }
 
-function toDoc(e: Entry): Doc {
+/**
+ * Build-time vocabulary expansion. An entry that already uses one word of a synonym group (in its title, questions or keywords)
+ * also gets the other words of that group as search keywords. Entries that never use the group are not touched, so
+ * "cost" never pulls in an unrelated entry. Nothing is added to the answer text or to the entry the visitor sees.
+ */
+function expandKeywords(e: Entry, lang: LanguagePack): string[] {
+  const groups = lang.synonyms;
+  if (!groups?.length) return [];
+  const own = new Set(indexTerms([e.title, ...e.questions, ...e.keywords].join(' '), lang));
+  const extra = new Set<string>();
+  for (const group of groups) {
+    if (!group.some((w) => own.has(lang.stem(w)))) continue;
+    for (const w of group) if (!own.has(lang.stem(w))) extra.add(w);
+  }
+  return [...extra];
+}
+
+function toDoc(e: Entry, lang: LanguagePack): Doc {
   return {
     id: e.id,
     title: e.title,
     questions: e.questions.join(' \n '),
-    keywords: e.keywords.join(' '),
+    keywords: [...e.keywords, ...expandKeywords(e, lang)].join(' '),
     answer: e.answer ?? '',
   };
 }
@@ -174,7 +202,8 @@ function toDoc(e: Entry): Doc {
 export function createEngine(entries: readonly Entry[], language: string, thresholds?: Partial<Thresholds>): Engine {
   const own = entries.filter((e) => e.language === language);
   const mini = new MiniSearch<Doc>(miniOptions(getLanguage(language)));
-  mini.addAll(own.map(toDoc));
+  const lang = getLanguage(language);
+  mini.addAll(own.map((e) => toDoc(e, lang)));
   return new Engine(language, own, mini, thresholds);
 }
 

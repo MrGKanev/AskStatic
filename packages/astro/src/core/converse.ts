@@ -40,6 +40,11 @@ export const initialState = (): ConversationState => ({ fields: {}, last: { type
 
 const MAX_FAILED_CLARIFICATIONS = 2;
 const MAX_HISTORY = 10;
+const SHORT_QUERY_GAP = 0.35;
+const NEGATION_DOMINANT_COVERAGE = 0.7;
+const NEGATION_DOMINANT_RATIO = 4;
+// English only: other languages keep the strict guard until they have their own pattern.
+const SITUATION_NEGATION = /\b(?:with|and|but)\s+(?:no|without)\b/i;
 const CONTEXT_CHOICE_MAX_TERMS = 4;
 
 export function respond(engine: Engine, state: ConversationState, input: Input): { reply: Reply; state: ConversationState } {
@@ -113,7 +118,9 @@ function decide(engine: Engine, state: Snapshot, text: string): Snapshot {
   if (!top) return fallback(state, 'no-match');
   if (top.coverage < t.minCoverage || top.score < t.minScore) return fallback(state, 'low-confidence');
 
-  const close = r.candidates.filter((c) => c.coverage >= t.minCoverage && c.score >= top.score * (1 - t.gap)).slice(0, t.maxCandidates);
+  // A bare topic word ("cloudflare", "security") says little about which of several related entries is meant: be quicker to offer the choice.
+  const gap = r.terms.length <= 2 ? Math.max(t.gap, SHORT_QUERY_GAP) : t.gap;
+  const close = r.candidates.filter((c) => c.coverage >= t.minCoverage && c.score >= top.score * (1 - gap)).slice(0, t.maxCandidates);
 
   // Siblings of one clarification topic count as a single candidate: ask the clarifying question.
   const groups = new Map<string, Entry>();
@@ -126,7 +133,14 @@ function decide(engine: Engine, state: Snapshot, text: string): Snapshot {
   }
 
   const target = close.length > 1 ? ([...groups.values()][0] as Entry) : top.entry;
-  if (r.hasNegation) {
+  // A negation usually flips the meaning ("is it NOT free?", "does it not collect data?"). It is only safe to look past when the
+  // visitor is describing a situation ("a codebase WITH NO docs", "requests AND NO priorities") and one entry clearly dominates.
+  const second = r.candidates[1];
+  const dominant =
+    SITUATION_NEGATION.test(text) &&
+    top.coverage >= NEGATION_DOMINANT_COVERAGE &&
+    (!second || top.score >= second.score * NEGATION_DOMINANT_RATIO);
+  if (r.hasNegation && !dominant) {
     return { topicId: state.topicId, fields: state.fields, last: { type: 'disambiguate', reason: 'negation', candidates: [ref(target)] } };
   }
   if (!top.numbersOk) {

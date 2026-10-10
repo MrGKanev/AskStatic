@@ -90,14 +90,14 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
-test('interactive targets are at least 44px', async ({ page }) => {
+test('touch targets: main controls 44px, chips and links at least 32px (WCAG 2.2 AA asks for 24px)', async ({ page }) => {
   await openChat(page);
   await ask(page, 'How do I install it?');
   await expect(page.locator('ask-static .chip').first()).toBeVisible();
-  const small = await page.locator('ask-static button, ask-static input, ask-static a.src').evaluateAll((els) =>
-    els.filter((e) => e.getBoundingClientRect().height > 0 && e.getBoundingClientRect().height < 43.5).map((e) => `${e.tagName}.${e.className}:${Math.round(e.getBoundingClientRect().height)}`),
-  );
-  expect(small).toEqual([]);
+  const heightOf = (sel: string, min: number) =>
+    page.locator(sel).evaluateAll((els, m) => els.filter((e) => e.getBoundingClientRect().height > 0 && e.getBoundingClientRect().height < m).map((e) => `${e.tagName}.${e.className}:${Math.round(e.getBoundingClientRect().height)}`), min);
+  expect(await heightOf('ask-static .send, ask-static .close, ask-static input, ask-static .launcher', 43.5)).toEqual([]);
+  expect(await heightOf('ask-static .chip, ask-static .tool, ask-static a.src', 31.5)).toEqual([]);
 });
 
 test('320px wide: no horizontal scroll and the panel fits the viewport', async ({ page }) => {

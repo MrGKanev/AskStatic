@@ -12,7 +12,7 @@ export function normalizeText(input: string): string {
 }
 
 // Words (letters/marks/digits with inner ' or -) or numbers/versions like 2.1.0 or 1,5.
-const TOKEN = /\p{N}+(?:[.,]\p{N}+)*(?![\p{L}])|[\p{L}\p{N}][\p{L}\p{M}\p{N}'_-]*/gu;
+const TOKEN = /\p{N}+(?:[.,]\p{N}+)*(?![\p{L}\p{N}])|[\p{L}\p{N}][\p{L}\p{M}\p{N}'_-]*/gu;
 
 /** Raw tokens: normalised, not stemmed, nothing removed. */
 export function tokenize(input: string): string[] {

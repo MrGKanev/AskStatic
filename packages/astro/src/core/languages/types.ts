@@ -6,6 +6,8 @@ export interface LanguagePack {
   negations: ReadonlySet<string>;
   /** Light, conservative stemming applied to indexed and query tokens (already lower-cased). */
   stem(token: string): string;
+  /** Groups of interchangeable words (price/cost/fee). Applied at build time: an entry that already contains one word of a group also gets the others added to its search keywords. */
+  synonyms?: readonly (readonly string[])[];
   /** Optional second search channel: converts text typed in another script (e.g. Latin-typed Bulgarian) to the language's own script. */
   transliterate?(text: string): string;
 }

@@ -167,3 +167,82 @@ describe('bulgarian', () => {
     expect(type(say(bgEngine, 'не събира ли данни').reply)).not.toBe('answer');
   });
 });
+
+describe('vocabulary and question frame', () => {
+  const entry = (id: string, title: string, questions: string[], keywords: string[] = [], answer = 'x') =>
+    ({ id, language: 'en', title, questions, keywords, answer, sources: [], suggested: false, followUps: [] }) as const;
+  const kb = validateKnowledge([
+    entry('pricing', 'Pricing', ['How much does it cost?'], ['price']),
+    entry('consulting', 'Consulting', ['What consulting do you offer?']),
+    entry('learning', 'Learning', ['How do I learn programming?'], ['coding']),
+    entry('cf-a', "Cloudflare's trust is the vulnerability", [], ['cloudflare']),
+    entry('cf-b', 'MP4, Safari and Cloudflare', [], ['cloudflare']),
+  ]);
+  if (!kb.ok) throw new Error('fixture invalid');
+  const engine = createEngine(kb.entries, 'en');
+  const ask = (q: string) => respond(engine, initialState(), { type: 'text', text: q }).reply;
+
+  it('ignores the frame of a question, not its topic', () => {
+    const r = ask('what kind of consulting do you do?');
+    expect(r.type === 'answer' && r.entry.id).toBe('consulting');
+  });
+
+  it('expands synonyms only for entries that already use the group', () => {
+    const r = ask('what are your fees');
+    expect(r.type === 'answer' && r.entry.id).toBe('pricing');
+    // "fees" is a price word; the consulting entry never used one, so it is not pulled in.
+    expect(ask('fees') .type).not.toBe('fallback');
+  });
+
+  it('matches code / coding and price / pricing through the stemmer', () => {
+    const r = ask('how do I learn to code');
+    expect(r.type === 'answer' && r.entry.id).toBe('learning');
+    expect(ask('pricing').type).toBe('answer');
+  });
+
+  it('treats possessives like the base word and offers the choice for a bare topic', () => {
+    const r = ask('cloudflare');
+    expect(r.type).toBe('disambiguate');
+    expect(r.type === 'disambiguate' && r.candidates.map((c) => c.id).sort()).toEqual(['cf-a', 'cf-b']);
+  });
+
+  it('does not answer unrelated questions just because a verb matched', () => {
+    expect(ask('write me a poem about databases').type).toBe('fallback');
+  });
+});
+
+describe('matching quality', () => {
+  const e = (id: string, title: string, questions: string[], keywords: string[] = [], extra: Record<string, unknown> = {}) =>
+    ({ id, language: 'en', title, questions, keywords, answer: 'x', sources: [], suggested: false, followUps: [], weight: 1, ...extra }) as never;
+  const kb = validateKnowledge([
+    e('legacy', 'Legacy projects', ['Can you work on a legacy codebase with no documentation?'], ['legacy', 'codebase']),
+    e('privacy', 'Privacy', ['Does it collect any data?'], ['privacy', 'data']),
+    e('migrations', 'Migrations', ['Can you migrate my store?'], ['migration', 'products']),
+    e('homelab', 'Homelab', ['What do you self-host?'], ['self-hosting', 'homelab']),
+    e('phone', 'Phone', ['What phone do you use?']),
+    e('post-phone', 'Why I stopped my phone notifications', [], ['phone'], { weight: 0.7 }),
+  ]);
+  if (!kb.ok) throw new Error('fixture invalid');
+  const engine = createEngine(kb.entries, 'en');
+  const ask = (q: string) => respond(engine, initialState(), { type: 'text', text: q }).reply;
+
+  it('keeps "40k" as one token instead of cutting it into 4 and 0k', () => {
+    expect(tokenize('my 40k product store')).toContain('40k');
+    expect(ask('can you move my 40k product store').type).toBe('answer');
+  });
+
+  it('looks past a negation that describes a situation, but not one that asks about a property', () => {
+    expect(ask('we inherited a legacy codebase with no docs').type).toBe('answer');
+    expect(ask('does it not collect data').type).not.toBe('answer');
+  });
+
+  it('finds a hyphenated word from its parts', () => {
+    const r = ask('what do you self host');
+    expect(r.type === 'answer' && r.entry.id).toBe('homelab');
+  });
+
+  it('lets a bulk-generated entry rank below the hand-written one', () => {
+    const r = ask('which phone do you use');
+    expect(r.type === 'answer' && r.entry.id).toBe('phone');
+  });
+});
