@@ -1,6 +1,6 @@
 {
   "name": "astro-integration-askstatic",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Static, model-free chat search for Astro sites: answers, clarifying questions and source links, generated at build time.",
   "license": "MIT",
   "type": "module",

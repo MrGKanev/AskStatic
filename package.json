@@ -12,7 +12,8 @@
     "typecheck": "pnpm -r typecheck",
     "eval": "pnpm --filter astro-integration-askstatic eval",
     "e2e": "playwright test",
-    "size": "node scripts/check-size.mjs"
+    "size": "node scripts/check-size.mjs",
+    "release": "pnpm build && pnpm --filter astro-integration-askstatic publish --access public --no-git-checks"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
