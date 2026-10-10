@@ -1,0 +1,17 @@
+id: languages
+language: en
+title: Supported languages
+questions:
+  - Which languages are supported?
+  - Does it work in Bulgarian?
+keywords:
+  - language
+  - bulgarian
+  - english
+  - i18n
+  - translation
+answer: English and Bulgarian are built in. Other languages can be added with a language pack.
+sources:
+  - title: Languages
+    url: /docs/languages/
+suggested: true

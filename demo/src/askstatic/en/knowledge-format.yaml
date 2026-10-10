@@ -1,0 +1,16 @@
+id: knowledge-format
+language: en
+title: Writing knowledge entries
+questions:
+  - How do I add questions and answers?
+  - What is the knowledge file format?
+keywords:
+  - knowledge
+  - yaml
+  - json
+  - entries
+  - faq
+answer: Put one YAML or JSON file per topic in src/askstatic with questions, an answer and sources.
+sources:
+  - title: Knowledge format
+    url: /docs/knowledge/

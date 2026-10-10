@@ -1,0 +1,16 @@
+id: requirements
+language: en
+title: Requirements
+questions:
+  - What are the requirements?
+  - Which Astro version do I need?
+keywords:
+  - requirements
+  - node
+  - version
+  - astro 5
+  - compatibility
+answer: Astro 5 or newer and Node 22.12 or newer.
+sources:
+  - title: Requirements
+    url: /docs/requirements/

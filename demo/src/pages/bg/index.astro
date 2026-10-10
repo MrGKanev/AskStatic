@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import pages from '../../data/pages.json';
+---
+<Base title="AskStatic демо" lang="bg">
+  <h1>AskStatic демо</h1>
+  <p>Отворете чата в ъгъла и задайте въпрос.</p>
+  <ul>{Object.entries(pages.bg).map(([url, p]) => <li><a href={url}>{p.title}</a></li>)}</ul>
+</Base>

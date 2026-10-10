@@ -1,0 +1,14 @@
+id: refunds
+language: en
+title: Refund policy
+questions:
+  - Can I get a refund?
+  - What is your refund policy?
+keywords:
+  - refund
+  - money back
+  - cancel
+answer: Refunds are available within 30 days of purchase.
+sources:
+  - title: Refund policy
+    url: /legal/refunds/

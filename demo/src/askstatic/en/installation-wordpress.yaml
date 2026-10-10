@@ -1,0 +1,12 @@
+id: installation-wordpress
+language: en
+title: Install on WordPress
+questions:
+  - How do I install it on WordPress?
+keywords:
+  - wordpress
+  - plugin
+answer: Upload the plugin zip in Plugins > Add New and activate it.
+sources:
+  - title: WordPress setup
+    url: /docs/install/wordpress/

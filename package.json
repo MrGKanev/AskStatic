@@ -1,0 +1,13 @@
+{
+  "name": "askstatic-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.10.1",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "eval": "pnpm --filter @askstatic/core eval"
+  }
+}

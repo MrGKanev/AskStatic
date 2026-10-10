@@ -1,0 +1,17 @@
+id: performance
+language: en
+title: Performance and size
+questions:
+  - How big is it?
+  - Will it slow down my site?
+keywords:
+  - performance
+  - size
+  - kb
+  - lazy
+  - speed
+  - bundle
+answer: Nothing loads until the chat is opened. The engine and index are fetched on first use.
+sources:
+  - title: Performance
+    url: /docs/performance/

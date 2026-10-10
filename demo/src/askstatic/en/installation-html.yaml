@@ -1,0 +1,12 @@
+id: installation-html
+language: en
+title: Install on plain HTML
+questions:
+  - How do I install it on a static HTML site?
+keywords:
+  - html
+  - script
+answer: Copy the script tag from the docs into your page footer.
+sources:
+  - title: HTML setup
+    url: /docs/install/html/

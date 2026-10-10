@@ -1,0 +1,15 @@
+id: license
+language: en
+title: License
+questions:
+  - What license is it under?
+  - Can I use it commercially?
+keywords:
+  - license
+  - mit
+  - commercial
+  - open source
+answer: MIT licensed. Commercial use is allowed.
+sources:
+  - title: License
+    url: /license/

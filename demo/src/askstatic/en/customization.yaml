@@ -1,0 +1,17 @@
+id: customization
+language: en
+title: Customising the look
+questions:
+  - How do I change the colors?
+  - Can I style the chat widget?
+keywords:
+  - style
+  - theme
+  - css
+  - colors
+  - dark mode
+  - customize
+answer: Override the CSS variables such as --askstatic-accent on the widget element.
+sources:
+  - title: Theming
+    url: /docs/theming/

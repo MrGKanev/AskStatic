@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import pages from '../data/pages.json';
+
+export function getStaticPaths() {
+  return Object.entries(pages).flatMap(([lang, set]) =>
+    Object.entries(set).map(([url, page]) => ({
+      params: { slug: url.replace(/^\/|\/$/g, '') },
+      props: { lang, ...page },
+    })),
+  );
+}
+const { title, body, lang } = Astro.props;
+---
+<Base title={title} lang={lang}>
+  <h1>{title}</h1>
+  <p>{body}</p>
+</Base>

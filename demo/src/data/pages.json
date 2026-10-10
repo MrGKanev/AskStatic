@@ -1,0 +1,94 @@
+{
+  "en": {
+    "/docs/install/astro/": {
+      "title": "Astro setup",
+      "body": "Run `npx astro add askstatic` and add the <AskStatic /> component to a layout."
+    },
+    "/docs/install/wordpress/": {
+      "title": "WordPress setup",
+      "body": "Upload the plugin zip in Plugins > Add New and activate it."
+    },
+    "/docs/install/html/": {
+      "title": "HTML setup",
+      "body": "Copy the script tag from the docs into your page footer."
+    },
+    "/pricing/": {
+      "title": "Pricing",
+      "body": "There is a free plan for personal sites. Paid plans start at $9 per month."
+    },
+    "/legal/refunds/": {
+      "title": "Refund policy",
+      "body": "Refunds are available within 30 days of purchase."
+    },
+    "/docs/languages/": {
+      "title": "Languages",
+      "body": "English and Bulgarian are built in. Other languages can be added with a language pack."
+    },
+    "/docs/privacy/": {
+      "title": "Privacy",
+      "body": "Nothing is sent anywhere. All matching happens in the visitor's browser."
+    },
+    "/docs/requirements/": {
+      "title": "Requirements",
+      "body": "Astro 5 or newer and Node 22.12 or newer."
+    },
+    "/docs/theming/": {
+      "title": "Theming",
+      "body": "Override the CSS variables such as --askstatic-accent on the widget element."
+    },
+    "/docs/knowledge/": {
+      "title": "Knowledge format",
+      "body": "Put one YAML or JSON file per topic in src/askstatic with questions, an answer and sources."
+    },
+    "/docs/pagefind/": {
+      "title": "Search fallback",
+      "body": "When no entry matches, the widget shows Pagefind results from the rest of your site."
+    },
+    "/docs/how-it-works/": {
+      "title": "How it works",
+      "body": "No. Answers are selected from your own pre-written entries; no model runs in the browser or on a server."
+    },
+    "/docs/performance/": {
+      "title": "Performance",
+      "body": "Nothing loads until the chat is opened. The engine and index are fetched on first use."
+    },
+    "/license/": {
+      "title": "License",
+      "body": "MIT licensed. Commercial use is allowed."
+    }
+  },
+  "bg": {
+    "/bg/install-astro/": {
+      "title": "Настройка за Astro",
+      "body": "Изпълнете npx astro add askstatic."
+    },
+    "/bg/install-wordpress/": {
+      "title": "Настройка за WordPress",
+      "body": "Качете добавката."
+    },
+    "/bg/install-html/": {
+      "title": "Настройка за HTML",
+      "body": "Копирайте script тага."
+    },
+    "/bg/pricing/": {
+      "title": "Цени",
+      "body": "Безплатен план и платени планове."
+    },
+    "/bg/languages/": {
+      "title": "Езици",
+      "body": "Английски и български."
+    },
+    "/bg/privacy/": {
+      "title": "Поверителност",
+      "body": "Данните не напускат браузъра."
+    },
+    "/bg/requirements/": {
+      "title": "Изисквания",
+      "body": "Astro 5+ и Node 22.12+."
+    },
+    "/bg/performance/": {
+      "title": "Бързодействие",
+      "body": "Зарежда се при отваряне."
+    }
+  }
+}

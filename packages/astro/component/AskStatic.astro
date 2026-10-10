@@ -1,0 +1,15 @@
+---
+export interface Props {
+  /** Chat language. Defaults to the page's <html lang>. */
+  lang?: string;
+  /** Launcher button and panel title. */
+  title?: string;
+  /** Override any UI string, e.g. { placeholder: "Search…" }. */
+  labels?: Record<string, string>;
+}
+const { lang, title, labels } = Astro.props;
+---
+<ask-static data-pagefind-ignore data-lang={lang} data-title={title} data-labels={labels ? JSON.stringify(labels) : undefined}></ask-static>
+<script>
+  import '../client/widget.ts';
+</script>

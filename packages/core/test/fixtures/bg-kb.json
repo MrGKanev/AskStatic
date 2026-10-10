@@ -1,0 +1,220 @@
+[
+ {
+  "id": "pricing",
+  "language": "bg",
+  "title": "Цени",
+  "suggested": true,
+  "questions": [
+   "Колко струва?",
+   "Каква е цената?",
+   "Има ли безплатен план?"
+  ],
+  "keywords": [
+   "цена",
+   "цени",
+   "струва",
+   "безплатен",
+   "план",
+   "такса"
+  ],
+  "answer": "Има безплатен план за лични сайтове. Платените планове започват от 9 долара месечно.",
+  "sources": [
+   {
+    "title": "Цени",
+    "url": "/bg/pricing/"
+   }
+  ]
+ },
+ {
+  "id": "languages",
+  "language": "bg",
+  "title": "Поддържани езици",
+  "suggested": true,
+  "questions": [
+   "Кои езици се поддържат?",
+   "Работи ли на български?"
+  ],
+  "keywords": [
+   "език",
+   "езици",
+   "български",
+   "английски",
+   "превод"
+  ],
+  "answer": "Английски и български са вградени. Други езици се добавят чрез езиков пакет.",
+  "sources": [
+   {
+    "title": "Езици",
+    "url": "/bg/languages/"
+   }
+  ]
+ },
+ {
+  "id": "privacy",
+  "language": "bg",
+  "title": "Поверителност",
+  "questions": [
+   "Събира ли данни за посетителите?",
+   "Съвместим ли е с GDPR?"
+  ],
+  "keywords": [
+   "поверителност",
+   "gdpr",
+   "бисквитки",
+   "проследяване",
+   "данни"
+  ],
+  "answer": "Нищо не се изпраща никъде. Цялото търсене се случва в браузъра на посетителя.",
+  "sources": [
+   {
+    "title": "Поверителност",
+    "url": "/bg/privacy/"
+   }
+  ]
+ },
+ {
+  "id": "requirements",
+  "language": "bg",
+  "title": "Изисквания",
+  "questions": [
+   "Какви са изискванията?",
+   "Каква версия на Astro ми трябва?"
+  ],
+  "keywords": [
+   "изисквания",
+   "node",
+   "версия",
+   "съвместимост"
+  ],
+  "answer": "Astro 5 или по-нова и Node 22.12 или по-нова.",
+  "sources": [
+   {
+    "title": "Изисквания",
+    "url": "/bg/requirements/"
+   }
+  ]
+ },
+ {
+  "id": "performance",
+  "language": "bg",
+  "title": "Бързодействие и размер",
+  "questions": [
+   "Колко е голям?",
+   "Ще забави ли сайта ми?"
+  ],
+  "keywords": [
+   "бързодействие",
+   "размер",
+   "скорост",
+   "зареждане"
+  ],
+  "answer": "Нищо не се зарежда, докато чатът не бъде отворен.",
+  "sources": [
+   {
+    "title": "Бързодействие",
+    "url": "/bg/performance/"
+   }
+  ]
+ },
+ {
+  "id": "installation",
+  "language": "bg",
+  "title": "Инсталация",
+  "suggested": true,
+  "questions": [
+   "Как се инсталира?",
+   "Как да го добавя в сайта?",
+   "Ръководство за инсталация"
+  ],
+  "keywords": [
+   "инсталиране",
+   "настройка",
+   "добавяне",
+   "вграждане"
+  ],
+  "clarification": {
+   "field": "platform",
+   "question": "На коя платформа е сайтът?",
+   "choices": [
+    {
+     "label": "Astro",
+     "value": "astro",
+     "answerId": "installation-astro"
+    },
+    {
+     "label": "WordPress",
+     "value": "wordpress",
+     "answerId": "installation-wordpress",
+     "aliases": [
+      "wp"
+     ]
+    },
+    {
+     "label": "Обикновен HTML",
+     "value": "html",
+     "answerId": "installation-html",
+     "aliases": [
+      "html"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "installation-astro",
+  "language": "bg",
+  "title": "Инсталация в Astro",
+  "questions": [
+   "Как да го инсталирам в Astro?"
+  ],
+  "keywords": [
+   "astro",
+   "интеграция"
+  ],
+  "answer": "Изпълнете `npx astro add askstatic` и добавете компонента <AskStatic /> в шаблона.",
+  "sources": [
+   {
+    "title": "Настройка за Astro",
+    "url": "/bg/install-astro/"
+   }
+  ]
+ },
+ {
+  "id": "installation-wordpress",
+  "language": "bg",
+  "title": "Инсталация в WordPress",
+  "questions": [
+   "Как да го инсталирам в WordPress?"
+  ],
+  "keywords": [
+   "wordpress",
+   "добавка"
+  ],
+  "answer": "Качете архива на добавката от Добавки > Добавяне и я активирайте.",
+  "sources": [
+   {
+    "title": "Настройка за WordPress",
+    "url": "/bg/install-wordpress/"
+   }
+  ]
+ },
+ {
+  "id": "installation-html",
+  "language": "bg",
+  "title": "Инсталация в HTML сайт",
+  "questions": [
+   "Как да го инсталирам в статичен HTML сайт?"
+  ],
+  "keywords": [
+   "html",
+   "скрипт"
+  ],
+  "answer": "Копирайте script тага от документацията в долната част на страницата.",
+  "sources": [
+   {
+    "title": "Настройка за HTML",
+    "url": "/bg/install-html/"
+   }
+  ]
+ }
+]

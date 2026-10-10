@@ -1,0 +1,27 @@
+id: installation
+language: en
+title: Installation
+questions:
+  - How do I install it?
+  - How do I add it to my site?
+  - Installation guide
+keywords:
+  - install
+  - setup
+  - add
+clarification:
+  field: platform
+  question: Which platform is your site built on?
+  choices:
+    - label: Astro
+      value: astro
+      answerId: installation-astro
+    - label: WordPress
+      value: wordpress
+      answerId: installation-wordpress
+      aliases:
+        - wp
+    - label: Plain HTML
+      value: html
+      answerId: installation-html
+suggested: true

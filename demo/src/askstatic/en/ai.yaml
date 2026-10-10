@@ -1,0 +1,16 @@
+id: ai
+language: en
+title: Does it use AI?
+questions:
+  - Does it use AI?
+  - Is there a language model behind it?
+keywords:
+  - ai
+  - llm
+  - model
+  - gpt
+  - machine learning
+answer: No. Answers are selected from your own pre-written entries; no model runs in the browser or on a server.
+sources:
+  - title: How it works
+    url: /docs/how-it-works/

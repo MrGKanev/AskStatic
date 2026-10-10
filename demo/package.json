@@ -1,0 +1,11 @@
+{
+  "name": "askstatic-demo",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "astro dev", "build": "astro build", "preview": "astro preview" },
+  "dependencies": {
+    "astro": "^7.3.8",
+    "astro-integration-askstatic": "workspace:*",
+    "pagefind": "^1.5.2"
+  }
+}

@@ -1,0 +1,34 @@
+- id: installation
+  language: bg
+  title: Инсталация
+  suggested: true
+  questions: ["Как се инсталира?", "Как да го добавя в сайта?", "Ръководство за инсталация"]
+  keywords: [инсталиране, настройка, добавяне, вграждане]
+  clarification:
+    field: platform
+    question: На коя платформа е сайтът?
+    choices:
+      - { label: Astro, value: astro, answerId: installation-astro }
+      - { label: WordPress, value: wordpress, answerId: installation-wordpress, aliases: [wp] }
+      - { label: Обикновен HTML, value: html, answerId: installation-html, aliases: [html] }
+- id: installation-astro
+  language: bg
+  title: Инсталация в Astro
+  questions: ["Как да го инсталирам в Astro?"]
+  keywords: [astro, интеграция]
+  answer: Изпълнете `npx astro add askstatic` и добавете компонента <AskStatic /> в шаблона.
+  sources: [{ title: Настройка за Astro, url: /bg/install-astro/ }]
+- id: installation-wordpress
+  language: bg
+  title: Инсталация в WordPress
+  questions: ["Как да го инсталирам в WordPress?"]
+  keywords: [wordpress, добавка]
+  answer: Качете архива на добавката от Добавки > Добавяне и я активирайте.
+  sources: [{ title: Настройка за WordPress, url: /bg/install-wordpress/ }]
+- id: installation-html
+  language: bg
+  title: Инсталация в HTML сайт
+  questions: ["Как да го инсталирам в статичен HTML сайт?"]
+  keywords: [html, скрипт]
+  answer: Копирайте script тага от документацията в долната част на страницата.
+  sources: [{ title: Настройка за HTML, url: /bg/install-html/ }]

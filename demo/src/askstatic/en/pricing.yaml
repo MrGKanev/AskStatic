@@ -1,0 +1,20 @@
+id: pricing
+language: en
+title: Pricing
+questions:
+  - How much does it cost?
+  - What is the price?
+  - Is there a free plan?
+keywords:
+  - price
+  - cost
+  - free
+  - plan
+  - billing
+answer: There is a free plan for personal sites. Paid plans start at $9 per month.
+sources:
+  - title: Pricing
+    url: /pricing/
+followUps:
+  - refunds
+suggested: true

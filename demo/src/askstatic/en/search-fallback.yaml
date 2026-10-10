@@ -1,0 +1,15 @@
+id: search-fallback
+language: en
+title: Full-site search fallback
+questions:
+  - Can it search my whole site?
+  - What happens when there is no answer?
+keywords:
+  - pagefind
+  - search
+  - fallback
+  - whole site
+answer: When no entry matches, the widget shows Pagefind results from the rest of your site.
+sources:
+  - title: Search fallback
+    url: /docs/pagefind/

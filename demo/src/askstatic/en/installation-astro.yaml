@@ -1,0 +1,12 @@
+id: installation-astro
+language: en
+title: Install on Astro
+questions:
+  - How do I install it on Astro?
+keywords:
+  - astro
+  - integration
+answer: Run `npx astro add askstatic` and add the <AskStatic /> component to a layout.
+sources:
+  - title: Astro setup
+    url: /docs/install/astro/

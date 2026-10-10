@@ -1,0 +1,16 @@
+id: privacy
+language: en
+title: Privacy and data
+questions:
+  - Does it collect my visitors' data?
+  - Is it GDPR compliant?
+keywords:
+  - privacy
+  - gdpr
+  - cookies
+  - tracking
+  - data
+answer: Nothing is sent anywhere. All matching happens in the visitor's browser.
+sources:
+  - title: Privacy
+    url: /docs/privacy/
