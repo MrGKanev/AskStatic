@@ -38,7 +38,7 @@ The site uses pnpm's `minimumReleaseAge`, so a package published minutes ago is 
 
 ```yaml
 minimumReleaseAgeExclude:
-  - astro-integration-askstatic@0.1.3
+  - astro-integration-askstatic@0.1.4
 ```
 
 `pagefind` is an optional peer; the site already has it.
