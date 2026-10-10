@@ -29,6 +29,7 @@ const STYLE = `
 :host([data-theme="dark"]) { --a: var(--askstatic-accent, #8ea8ff); --on-a: var(--askstatic-on-accent, #0e1117); --bg: var(--askstatic-bg, #16181d); --fg: var(--askstatic-fg, #eceef2);
   --muted: var(--askstatic-muted, #a0a7b4); --line: var(--askstatic-line, #2b303a); --soft: var(--askstatic-soft, #232730); }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 button { font: inherit; color: inherit; cursor: pointer; }
 svg { display: block; width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 :focus-visible { outline: 3px solid var(--a); outline-offset: 2px; }
@@ -44,7 +45,7 @@ header { display: flex; align-items: center; gap: 12px; padding: 14px 10px 14px 
 .who b { font-weight: 650; font-size: 15px; line-height: 1.2; } .who small { color: var(--muted); font-size: 12.5px; line-height: 1.3; }
 .close { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--muted); font-size: 20px; }
 .close:hover { background: var(--soft); color: var(--fg); }
-.log { flex: 1; overflow-y: auto; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
+.log { flex: 1; overflow-y: auto; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 14px; }
 .row { display: flex; align-items: flex-end; gap: 8px; max-width: 100%; }
 .row .avatar { width: 28px; height: 28px; font-size: 14px; }
 .row.user { justify-content: flex-end; }
@@ -62,21 +63,23 @@ header { display: flex; align-items: center; gap: 12px; padding: 14px 10px 14px 
 .src:hover { border-color: var(--a); transform: translateX(2px); } .src svg { flex: none; color: var(--a); }
 .src span { min-width: 0; } .src small { display: block; margin-top: 1px; color: var(--muted); font-weight: 400; font-size: 12px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { min-height: 40px; padding: 6px 14px; border: 1px solid color-mix(in srgb, var(--a) 40%, var(--line)); border-radius: 999px; background: var(--bg); color: var(--fg); font-size: 14px; font-weight: 500; transition: background .15s, border-color .15s; }
+.chip { min-height: 44px; padding: 6px 14px; border: 1px solid color-mix(in srgb, var(--a) 40%, var(--line)); border-radius: 999px; background: var(--bg); color: var(--fg); font-size: 14px; font-weight: 500; transition: background .15s, border-color .15s; }
 .chip:hover { border-color: var(--a); background: color-mix(in srgb, var(--a) 10%, var(--bg)); } .chip[disabled] { opacity: .5; cursor: default; }
 .starter { padding: 0 0 0 36px; } .starter .chips { margin: 0; }
 .typing { display: flex; gap: 4px; padding: 14px 16px; } .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); opacity: .55; }
 .tools { display: flex; gap: 4px; padding: 0 12px 4px; }
-.tool { min-height: 34px; padding: 0 10px; border: 0; border-radius: 8px; background: none; color: var(--muted); font-size: 13px; }
+.tool { min-height: 44px; padding: 0 10px; border: 0; border-radius: 8px; background: none; color: var(--muted); font-size: 13px; }
 .tool:hover { background: var(--soft); color: var(--fg); }
 form { display: flex; align-items: center; gap: 8px; margin: 8px 12px 6px; padding: 5px 5px 5px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); transition: border-color .15s, box-shadow .15s; }
 form:focus-within { border-color: var(--a); box-shadow: 0 0 0 3px color-mix(in srgb, var(--a) 22%, transparent); }
-input { flex: 1; min-width: 0; min-height: 40px; padding: 0; border: 0; outline: 0; background: none; color: var(--fg); font: inherit; }
+input { flex: 1; min-width: 0; min-height: 44px; padding: 0; border: 0; outline: 0; background: none; color: var(--fg); font: inherit; }
+input:focus-visible { outline: 0; }
 input::placeholder { color: var(--muted); }
-.send { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; background: var(--a); color: var(--on-a); font-size: 18px; transition: transform .15s; } .send:hover { transform: scale(1.06); }
-.note { margin: 0; padding: 0 16px 12px; color: var(--muted); font-size: 11.5px; text-align: center; }
+.send { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--a); color: var(--on-a); font-size: 18px; transition: transform .15s; } .send:hover { transform: scale(1.06); }
+.note { margin: 0; padding: 0 16px calc(12px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: 11.5px; text-align: center; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 480px) { .panel { right: 0; bottom: 0; width: 100vw; height: 88dvh; border-radius: var(--r) var(--r) 0 0; border-bottom: 0; } .launcher { right: 14px; bottom: 14px; } .launcher[aria-expanded="true"] { display: none; } }
+@media (forced-colors: active) { .panel, .chip, .src, form, .launcher, .send { border: 1px solid CanvasText; } .msg { border: 1px solid CanvasText; } .row.user .msg { border-style: dashed; } .avatar { forced-color-adjust: none; background: Highlight; color: HighlightText; } :focus-visible { outline: 3px solid Highlight; } }
 @media (prefers-reduced-motion: no-preference) {
   .panel { animation: rise .22s cubic-bezier(.2,.8,.2,1); } .row { animation: pop .25s ease-out; }
   .typing i { animation: blink 1.1s infinite; } .typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
@@ -102,6 +105,7 @@ const ICONS = {
   close: 'M6 6l12 12M18 6L6 18',
   send: 'M5 12h14M13 6l6 6-6 6',
   arrow: 'M7 17L17 7M8 7h9v9',
+  trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3',
 } as const;
 
 function icon(name: keyof typeof ICONS): SVGElement {
@@ -190,6 +194,8 @@ class AskStatic extends HTMLElement {
   private log!: HTMLElement;
   private input!: HTMLInputElement;
   private pagefind?: Promise<any>;
+  private announcer!: HTMLElement;
+  private clearBtn!: HTMLButtonElement;
 
   connectedCallback() {
     this.chatLang = (this.dataset.lang || document.documentElement.lang || 'en').toLowerCase().split('-')[0] as string;
@@ -199,6 +205,9 @@ class AskStatic extends HTMLElement {
     } catch {}
     this.ui = stringsFor(this.chatLang, { ...(this.dataset.title ? { title: this.dataset.title } : {}), ...overrides });
     this.render();
+    try {
+      if (sessionStorage.getItem(`${this.storageKey}:open`)) this.open(true);
+    } catch {}
   }
 
   private render() {
@@ -217,6 +226,7 @@ class AskStatic extends HTMLElement {
     this.panel.id = 'panel';
     this.panel.hidden = true;
     this.panel.setAttribute('role', 'dialog');
+    this.panel.setAttribute('aria-modal', 'false');
     this.panel.setAttribute('aria-label', this.ui.title);
     this.panel.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Escape') {
@@ -231,6 +241,14 @@ class AskStatic extends HTMLElement {
     const badge = el('span', 'avatar');
     badge.append(icon('spark'));
     header.append(badge, who);
+    this.clearBtn = el('button', 'close') as HTMLButtonElement;
+    this.clearBtn.append(icon('trash'));
+    this.clearBtn.type = 'button';
+    this.clearBtn.hidden = true;
+    this.clearBtn.title = this.ui.clear;
+    this.clearBtn.setAttribute('aria-label', this.ui.clear);
+    this.clearBtn.addEventListener('click', () => this.clearChat());
+    header.append(this.clearBtn);
     const close = el('button', 'close') as HTMLButtonElement;
     close.append(icon('close'));
     close.type = 'button';
@@ -239,10 +257,15 @@ class AskStatic extends HTMLElement {
     header.append(close);
 
     this.log = el('div', 'log');
+    // The log is re-rendered on every turn, so it must not be live itself: a separate status region announces only the newest reply.
     this.log.setAttribute('role', 'log');
-    this.log.setAttribute('aria-live', 'polite');
+    this.log.setAttribute('aria-live', 'off');
     this.log.setAttribute('aria-label', this.ui.log);
     this.log.tabIndex = 0;
+    this.announcer = el('div', 'sr');
+    this.announcer.setAttribute('role', 'status');
+    this.announcer.setAttribute('aria-live', 'polite');
+    this.announcer.setAttribute('aria-atomic', 'true');
 
     const form = el('form') as HTMLFormElement;
     this.input = el('input') as HTMLInputElement;
@@ -263,14 +286,18 @@ class AskStatic extends HTMLElement {
       void this.ask({ type: 'text', text }, text);
     });
 
-    this.panel.append(header, this.log, form, ...(this.ui.note ? [el('p', 'note', this.ui.note)] : []));
+    this.panel.append(header, this.log, this.announcer, form, ...(this.ui.note ? [el('p', 'note', this.ui.note)] : []));
     this.root.append(style, this.launcher, this.panel);
   }
 
-  private open() {
+  private open(restoring = false) {
     this.panel.hidden = false;
     this.launcher.setAttribute('aria-expanded', 'true');
-    this.input.focus();
+    try {
+      sessionStorage.setItem(`${this.storageKey}:open`, '1');
+    } catch {}
+    // Re-opening after a page navigation must not steal focus from the new page.
+    if (!restoring) this.input.focus();
     this.loading ??= this.load();
     this.loading.catch(() => {
       this.loading = undefined;
@@ -278,6 +305,9 @@ class AskStatic extends HTMLElement {
   }
 
   private close() {
+    try {
+      sessionStorage.removeItem(`${this.storageKey}:open`);
+    } catch {}
     this.panel.hidden = true;
     this.launcher.setAttribute('aria-expanded', 'false');
     this.launcher.focus();
@@ -344,6 +374,8 @@ class AskStatic extends HTMLElement {
   private typing = false;
 
   private ask(input: Parameters<Core['respond']>[2], label?: string): Promise<void> {
+    // A question sent while the engine is still loading is queued instead of dropped.
+    if ((!this.engine || !this.core || !this.state) && this.loading) return this.loading.then(() => this.ask(input, label), () => undefined);
     if (!this.engine || !this.core || !this.state) return Promise.resolve();
     if (label) this.messages.push({ from: 'user', text: label });
     const { reply, state } = this.core.respond(this.engine, this.state, input);
@@ -364,6 +396,7 @@ class AskStatic extends HTMLElement {
     this.chain = this.chain.then(async () => {
       if (!instant) await new Promise((r) => setTimeout(r, 380 + Math.min(500, (reply.type === 'answer' ? (reply.entry.answer ?? '').length : 40) * 3)));
       this.messages.push({ from: 'bot', reply });
+      this.announce(reply);
       if (reply.type === 'fallback' && this.manifest?.pagefind && input.type === 'text') {
         this.messages.push({ from: 'site', query: input.text });
       }
@@ -374,7 +407,34 @@ class AskStatic extends HTMLElement {
     return this.chain;
   }
 
+  /** Wipes the conversation and the saved session; the greeting and starter chips come back. */
+  private clearChat() {
+    if (!this.core) return;
+    this.messages = [];
+    this.state = this.core.initialState();
+    this.typing = false;
+    try {
+      sessionStorage.removeItem(this.storageKey);
+    } catch {}
+    this.paintAll();
+    this.announcer.textContent = this.ui.cleared;
+    this.input.focus();
+  }
+
+  private announce(reply: Reply) {
+    const plain = (t: string) => t.replace(/\*\*|`/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/^[-\d.]+\s/gm, '').replace(/\s+/g, ' ').trim();
+    let text = '';
+    if (reply.type === 'answer') text = plain(reply.entry.answer ?? reply.entry.title);
+    else if (reply.type === 'clarify') text = reply.question;
+    else if (reply.type === 'disambiguate') text = this.ui.didYouMean;
+    else if (reply.type === 'fallback') text = this.ui.noMatch;
+    // Re-set after a tick so identical consecutive replies are still announced.
+    this.announcer.textContent = '';
+    setTimeout(() => (this.announcer.textContent = text.slice(0, 400)), 50);
+  }
+
   private paintAll() {
+    this.clearBtn.hidden = !this.messages.length;
     this.log.replaceChildren();
     this.log.append(this.botRow(this.botBox(this.ui.greeting)));
     if (!this.messages.length) this.log.append(this.starters());
@@ -382,7 +442,9 @@ class AskStatic extends HTMLElement {
     this.messages.forEach((m, i) => {
       if (m.from === 'user') {
         const row = el('div', 'row user');
-        row.append(el('div', 'msg', m.text));
+        const bubble = el('div', 'msg');
+        bubble.append(el('span', 'sr', this.ui.youSaid), m.text);
+        row.append(bubble);
         this.log.append(row);
       }
       else if (m.from === 'bot') this.log.append(this.botRow(this.replyBox(m.reply, i === lastBot && !this.typing)));
@@ -390,13 +452,18 @@ class AskStatic extends HTMLElement {
     });
     if (this.typing) {
       const dots = el('div', 'msg typing');
-      dots.setAttribute('role', 'status');
-      dots.setAttribute('aria-label', this.ui.typing);
+      dots.setAttribute('aria-hidden', 'true');
       dots.append(el('i'), el('i'), el('i'));
       this.log.append(this.botRow(dots));
     }
     this.log.append(this.tools());
-    this.log.scrollTop = this.log.scrollHeight;
+    // A long answer should be read from its first line, not its last.
+    const rows = this.log.querySelectorAll<HTMLElement>('.row.bot');
+    const lastRow = rows[rows.length - 1];
+    const tall = lastRow && !this.typing && lastRow.offsetHeight > this.log.clientHeight - 24;
+    this.log.scrollTop = tall
+      ? lastRow.getBoundingClientRect().top - this.log.getBoundingClientRect().top + this.log.scrollTop - 12
+      : this.log.scrollHeight;
   }
 
   private botRow(...content: HTMLElement[]): HTMLElement {
@@ -404,6 +471,7 @@ class AskStatic extends HTMLElement {
     const av = el('span', 'avatar');
     av.append(icon('spark'));
     const stack = el('div', 'bubbles');
+    content[0]?.prepend(el('span', 'sr', this.ui.assistantSaid));
     stack.append(...content);
     row.append(av, stack);
     return row;
@@ -507,7 +575,7 @@ class AskStatic extends HTMLElement {
     box.setAttribute('role', 'status');
     void this.searchSite(query).then((results) => {
       box.replaceChildren();
-      if (!results.length) return box.remove();
+      if (!results.length) return (box.closest('.row') ?? box).remove();
       box.append(el('div', 'label', this.ui.siteResults));
       const ul = el('div', 'srcs');
       for (const r of results) {
@@ -519,7 +587,7 @@ class AskStatic extends HTMLElement {
         ul.append(a);
       }
       box.append(ul);
-    }, () => box.remove());
+    }, () => (box.closest('.row') ?? box).remove());
     return box;
   }
 

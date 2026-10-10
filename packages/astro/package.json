@@ -1,17 +1,34 @@
 {
   "name": "astro-integration-askstatic",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Static, model-free chat search for Astro sites: answers, clarifying questions and source links, generated at build time.",
   "license": "MIT",
   "type": "module",
-  "keywords": ["astro-integration", "withastro", "astro-component", "search", "chat", "faq", "static", "pagefind", "a11y"],
+  "keywords": [
+    "astro-integration",
+    "withastro",
+    "astro-component",
+    "search",
+    "chat",
+    "faq",
+    "static",
+    "pagefind",
+    "a11y"
+  ],
   "exports": {
-    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./component": "./component/AskStatic.astro",
     "./client": "./client/widget.ts",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "component", "client"],
+  "files": [
+    "dist",
+    "component",
+    "client"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -27,7 +44,9 @@
     "pagefind": "^1.3.0"
   },
   "peerDependenciesMeta": {
-    "pagefind": { "optional": true }
+    "pagefind": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -35,5 +54,8 @@
     "pagefind": "^1.5.2",
     "typescript": "^5.9.0",
     "vitest": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

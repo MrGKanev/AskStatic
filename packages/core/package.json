@@ -1,6 +1,6 @@
 {
   "name": "@askstatic/core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Framework-agnostic engine for AskStatic: static, model-free question answering over build-time knowledge.",
   "license": "MIT",
   "type": "module",
@@ -32,5 +32,8 @@
     "@types/node": "^22.0.0",
     "typescript": "^5.9.0",
     "vitest": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

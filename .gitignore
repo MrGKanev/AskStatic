@@ -2,3 +2,5 @@ node_modules
 dist
 .astro
 *.tsbuildinfo
+test-results/
+playwright-report/
