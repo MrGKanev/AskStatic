@@ -1,8 +1,8 @@
 import config from 'virtual:askstatic/config';
-import type { ConversationState, Engine, Entry, Reply } from '@mrgkanev/askstatic-core/runtime';
+import type { ConversationState, Engine, Entry, Reply } from '../src/core/runtime.ts';
 import { type Strings, stringsFor } from './strings.ts';
 
-type Core = typeof import('@mrgkanev/askstatic-core/runtime');
+type Core = typeof import('../src/core/runtime.ts');
 
 interface Manifest {
   defaultLanguage: string;
@@ -321,7 +321,7 @@ class AskStatic extends HTMLElement {
       const lang = manifest.languages[this.chatLang] ? this.chatLang : manifest.defaultLanguage;
       this.chatLang = lang;
       const [core, data] = await Promise.all([
-        import('@mrgkanev/askstatic-core/runtime'),
+        import('../src/core/runtime.ts'),
         fetch(`${config.packUrl}${manifest.languages[lang]}`).then((r) => {
           if (!r.ok) throw new Error(String(r.status));
           return r.json();

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { createEngine, initialState, loadEngine, respond, tokenize, validateKnowledge, type Engine, type Reply } from '../src/index.ts';
+import { createEngine, initialState, loadEngine, respond, tokenize, validateKnowledge, type Engine, type Reply } from '../src/core/index.ts';
 
 const raw = JSON.parse(readFileSync(new URL('./fixtures/en-kb.json', import.meta.url), 'utf8'));
 const kb = validateKnowledge(raw);

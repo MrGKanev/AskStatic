@@ -71,8 +71,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @mrgkanev/askstatic-core build
       - run: pnpm --filter astro-integration-askstatic build
-      - run: pnpm --filter askstatic-demo add astro@${{ matrix.astro }} --no-frozen-lockfile
+      - run: pnpm --filter askstatic-demo add astro@${{ matrix.astro }}
       - run: pnpm --filter askstatic-demo build
       - run: pnpm size

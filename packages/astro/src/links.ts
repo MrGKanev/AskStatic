@@ -1,6 +1,6 @@
 import { statSync } from 'node:fs';
 import { join } from 'node:path';
-import type { Entry } from '@mrgkanev/askstatic-core';
+import type { Entry } from './core/index.ts';
 
 const isFile = (p: string) => {
   try {

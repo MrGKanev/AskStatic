@@ -10,7 +10,7 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
-    "eval": "pnpm --filter @mrgkanev/askstatic-core eval",
+    "eval": "pnpm --filter astro-integration-askstatic eval",
     "e2e": "playwright test",
     "size": "node scripts/check-size.mjs"
   },

@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { createEngine, initialState, respond, validateKnowledge } from '../src/index.ts';
+import { createEngine, initialState, respond, validateKnowledge } from '../src/core/index.ts';
 
 type Expect = 'answer' | 'clarify' | 'fallback' | 'guarded' | 'any';
 interface Q { q: string; expect: Expect; id?: string }

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { loadEngine, validateKnowledge } from '@mrgkanev/askstatic-core';
+import { loadEngine, validateKnowledge } from '../src/core/index.ts';
 import { describe, expect, it } from 'vitest';
 import { loadKnowledge } from '../src/knowledge.ts';
 import { findBrokenSources } from '../src/links.ts';

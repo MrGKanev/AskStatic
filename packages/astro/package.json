@@ -27,15 +27,17 @@
   "files": [
     "dist",
     "component",
-    "client"
+    "client",
+    "src/core"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "eval": "node eval/run.ts en && node eval/run.ts bg"
   },
   "dependencies": {
-    "@mrgkanev/askstatic-core": "workspace:*",
+    "minisearch": "^7.2.0",
     "yaml": "^2.8.0",
     "zod": "^4.0.0"
   },

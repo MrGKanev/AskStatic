@@ -56,7 +56,7 @@ Non-goals for v1: LLM/embeddings, visual flow editor, analytics backend, AI auth
 ## 3. Architecture decisions
 
 1. **Monorepo, two packages**
-   - `packages/core` — pure TS, no Astro/DOM deps: schema (zod), normalize, tokenizer, retrieve, resolve (decision table from the research doc), conversation state. Unit-testable in Node.
+   - `packages/astro/src/core` (one published package, no separate core package) — pure TS, no Astro/DOM deps: schema (zod), normalize, tokenizer, retrieve, resolve (decision table from the research doc), conversation state. Unit-testable in Node.
    - `packages/astro` — the integration + `<AskStatic />` component + custom element client.
    - `demo/` — real Astro site (EN + BG content) used for tests and measurements.
 2. **Knowledge source**: files in `src/askstatic/` (YAML/JSON/Markdown frontmatter), validated at build. No dependency on content collections (works for every site); optional adapter later.

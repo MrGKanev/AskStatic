@@ -6,7 +6,7 @@ Date: 2026-10-10. Scope: how a new site owner gets good knowledge entries cheapl
 
 | Fact | Where | Consequence for this plan |
 |---|---|---|
-| Entry = `id, language, title, questions[], keywords[], answer?, sources[{title,url}], clarification?, suggested, followUps[]` | `packages/core/src/schema.ts` | Unknown YAML keys are silently stripped by zod. Any new metadata field (hash, origin, status) needs a schema change or must live outside the entry file. |
+| Entry = `id, language, title, questions[], keywords[], answer?, sources[{title,url}], clarification?, suggested, followUps[]` | `packages/astro/src/core/schema.ts` | Unknown YAML keys are silently stripped by zod. Any new metadata field (hash, origin, status) needs a schema change or must live outside the entry file. |
 | Index fields boosted `questions 3, title 2.5, keywords 2, answer 0.5`; exact match on canonical title/question wins first | `engine.ts` (`BOOST`, `exactMap`) | Example questions are the highest-value authoring input. Keywords are the cheap place for synonyms. |
 | Match gate: `minCoverage 0.6`, `minScore 2`, `gap 0.25`; negation and number mismatch force `disambiguate` | `engine.ts`, `converse.ts` `decide()` | Evaluation can reuse `respond()`; confident-wrong is already defined (see `eval/run.ts`). |
 | Reply types `answer / clarify / disambiguate / fallback{no-match, low-confidence, clarification-failed}` | `converse.ts` | These are exactly the "unanswered" signals to capture. No new engine logic needed. |
@@ -25,7 +25,7 @@ Observed gap in that real site: the hand-written intent entries (pricing, contac
 
 ### 1.1 Command surface
 
-New package `packages/cli` (bin `askstatic`, depends on `@mrgkanev/askstatic-core`, `yaml`, `zod`; prompts via `@clack/prompts`). Same code can be called from `npx astro add astro-integration-askstatic` follow-up message ("run `npx askstatic init`").
+New package `packages/cli` (bin `askstatic`, depends on `astro-integration-askstatic`, `yaml`, `zod`; prompts via `@clack/prompts`). Same code can be called from `npx astro add astro-integration-askstatic` follow-up message ("run `npx askstatic init`").
 
 ```
 npx astro add astro-integration-askstatic     # edits astro.config, installs
@@ -156,11 +156,11 @@ Package `@askstatic/assist` (not a dependency of `core`, `astro` or `cli` by def
 
 The engine tokenizes, stems (`en.ts` stem is conservative) and indexes `title, questions, keywords, answer`. Expansion must increase recall without lengthening the runtime or hiding negation/number guards. Approach: expand at build time into the existing fields, never at query time.
 
-New build step `expandEntry()` in `packages/core/src/expand.ts`, called from `buildPack()` (`packages/astro/src/pack.ts`) before `createEngine`. It returns a copy of each entry with extra terms appended to `keywords` only (keywords boost 2, answer 0.5, questions 3). It does not touch `questions`, so `exactMap` and the `duplicate-question` check stay precise, and expanded vocabulary is never shown to the visitor (they see `title`/`questions` only in suggestions).
+New build step `expandEntry()` in `packages/astro/src/core/expand.ts`, called from `buildPack()` (`packages/astro/src/pack.ts`) before `createEngine`. It returns a copy of each entry with extra terms appended to `keywords` only (keywords boost 2, answer 0.5, questions 3). It does not touch `questions`, so `exactMap` and the `duplicate-question` check stay precise, and expanded vocabulary is never shown to the visitor (they see `title`/`questions` only in suggestions).
 
 ### 2.2 Synonym and intent packs
 
-New per-language data, in `packages/core/src/languages/<code>.ts` next to `stopwords`: `synonyms: Record<string, string[]>` grouped by concept, e.g. `price: [cost, costs, fee, fees, rate, rates, charge, pricing, quote, estimate, budget, expensive, cheap, afford, "how much", money, pay, payment]`. `LanguagePack` gets an optional `synonyms?: readonly (readonly string[])[]` (array of equivalence groups).
+New per-language data, in `packages/astro/src/core/languages/<code>.ts` next to `stopwords`: `synonyms: Record<string, string[]>` grouped by concept, e.g. `price: [cost, costs, fee, fees, rate, rates, charge, pricing, quote, estimate, budget, expensive, cheap, afford, "how much", money, pay, payment]`. `LanguagePack` gets an optional `synonyms?: readonly (readonly string[])[]` (array of equivalence groups).
 
 Rules to avoid wrong answers:
 
@@ -193,7 +193,7 @@ Templates contain only placeholders in angle brackets (`<email>`, `<price>`) tha
 
 Deterministic generators, all run at `scan`/`add` time and written into the YAML so the owner can see and edit them (no hidden runtime magic):
 
-- Question forms: from a canonical question produce template variants per language ("What is X?" -> "tell me about X", "X?", "do you have X"); EN and BG pattern lists in `packages/core/src/languages/<code>.ts` (`questionForms`). Only 3-5 added per entry, flagged by a trailing YAML comment `# auto` so `askstatic lint` can count them.
+- Question forms: from a canonical question produce template variants per language ("What is X?" -> "tell me about X", "X?", "do you have X"); EN and BG pattern lists in `packages/astro/src/core/languages/<code>.ts` (`questionForms`). Only 3-5 added per entry, flagged by a trailing YAML comment `# auto` so `askstatic lint` can count them.
 - Typos: the engine already allows fuzzy 0.2 for terms of length >= 5 and prefix for >= 4 (`engine.ts`). Do not add typo strings to entries. Instead `askstatic eval --typos` mutates eval questions (swap, drop, double letter, adjacent key) to measure robustness (section 4.2). Short words (<5) have no fuzzy: the lint warns when an intent keyword shorter than 5 characters has no variant in keywords (e.g. `fee`, `job`, `pay`).
 - Per-language packs: `registerLanguage` already exists (`languages/index.ts`). Add pack fields `synonyms`, `questionForms`, `intentVocab` as optional so community packs can ship them. BG keeps its `transliterate` channel; the CLI `init` offers to add Latin-typed variants only through that channel (no duplicate entries).
 - Cross-language: `languages: ['en','bg']` produces separate packs per language, and ids resolve per language (`validate.ts key()`), so `init` writes the same id in each language folder and `askstatic lint` warns when an id exists in one language only.
@@ -249,7 +249,7 @@ Consent: events contain visitor-typed text, so for GDPR the owner is the control
 `askstatic gaps [--since 30d] [--file .askstatic/events.jsonl|URL] [--min 2]`:
 
 1. Reads events (file, or `--from-webhook-export` for a JSONL dump the owner downloads).
-2. Normalises each query with `canonicalPhrase` (`@mrgkanev/askstatic-core`) and groups identical and near-identical ones (same stemmed token set, or Jaccard >= 0.7).
+2. Normalises each query with `canonicalPhrase` (`astro-integration-askstatic`) and groups identical and near-identical ones (same stemmed token set, or Jaccard >= 0.7).
 3. Prints ranked clusters: count, example phrasings, reason mix, nearest existing entry (re-run `Engine.retrieve`) and its score.
 
 ```
@@ -285,11 +285,11 @@ A down-vote on an `answer` event is high signal ("confident-wrong" in the field)
 3. Real queries (best): clusters accepted in `askstatic learn` append `{ q, expect: "answer", id }` to the eval file; rejected ones with `i`/`guard` add `{ q, expect: "fallback" | "guarded" }`. Thumbs-up events add positive cases.
 4. Owner-written negatives: `askstatic eval --init` creates `src/askstatic/_eval/negatives.json` with 20 generic out-of-scope questions per language ("what is the weather", "who won the match", "write me a poem"), expected `fallback`/`guarded`; the owner adds site-specific ones (e.g. a competitor's product).
 
-File format (same shape as `packages/core/eval/questions.en.json`: `{ q, expect: answer|clarify|fallback|guarded|any, id? }`), stored at `src/askstatic/_eval/<lang>.json`; `_` prefix keeps it out of the shipped pack.
+File format (same shape as `packages/astro/eval/questions.en.json`: `{ q, expect: answer|clarify|fallback|guarded|any, id? }`), stored at `src/askstatic/_eval/<lang>.json`; `_` prefix keeps it out of the shipped pack.
 
 ### 4.2 `askstatic eval`
 
-Generalises `packages/core/eval/run.ts` (which today loads fixtures from `test/fixtures` and only handles one language) into a CLI command that loads the real knowledge via `loadKnowledge` + `validateKnowledge` and builds the engine with the configured `thresholds`.
+Generalises `packages/astro/eval/run.ts` (which today loads fixtures from `test/fixtures` and only handles one language) into a CLI command that loads the real knowledge via `loadKnowledge` + `validateKnowledge` and builds the engine with the configured `thresholds`.
 
 ```
 askstatic eval [--lang en] [--set self|synthetic|real|all] [--typos] [--json out.json] [--ci]
