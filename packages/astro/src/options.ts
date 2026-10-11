@@ -22,6 +22,8 @@ export const optionsSchema = z
         minScore: z.number().min(0),
         gap: z.number().min(0).max(1),
         maxCandidates: z.number().int().min(1).max(6),
+        longQueryFloor: z.number().min(0).max(1),
+        suggestUnsure: z.boolean(),
       })
       .partial()
       .default({}),

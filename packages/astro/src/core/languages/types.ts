@@ -8,6 +8,8 @@ export interface LanguagePack {
   stem(token: string): string;
   /** Groups of interchangeable words (price/cost/fee). Applied at build time: an entry that already contains one word of a group also gets the others added to its search keywords. */
   synonyms?: readonly (readonly string[])[];
+  /** Phrases that frame a question but carry no topic (greetings, "quick question", thanks). Removed from the query before searching. */
+  framePhrases?: readonly RegExp[];
   /** Optional second search channel: converts text typed in another script (e.g. Latin-typed Bulgarian) to the language's own script. */
   transliterate?(text: string): string;
 }

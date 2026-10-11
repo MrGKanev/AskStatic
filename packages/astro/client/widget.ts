@@ -604,7 +604,7 @@ class AskStatic extends HTMLElement {
         return this.botBox(reply.question, this.chips(reply.choices.map((c) => ({ label: c.label, run: () => this.ask({ type: 'choice', entryId: entry.id, value: c.value }, c.label) })), !live));
       }
       case 'disambiguate': {
-        const note = reply.reason === 'negation' ? ui.negationNote : reply.reason === 'number-mismatch' ? ui.numberNote : ui.didYouMean;
+        const note = reply.reason === 'negation' ? ui.negationNote : reply.reason === 'number-mismatch' ? ui.numberNote : reply.reason === 'unsure' ? ui.notSure : ui.didYouMean;
         return this.botBox(note, this.chips(reply.candidates.map((c) => ({ label: c.title, run: () => this.ask({ type: 'pick', entryId: c.id }, c.title) })), !live));
       }
       case 'fallback':

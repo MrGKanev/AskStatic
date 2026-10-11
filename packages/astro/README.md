@@ -93,7 +93,7 @@ Add YAML or JSON files under `src/askstatic/`. A file holds one entry or a list;
 | `defaultLanguage` | `'en'` | Used when the page language has no knowledge |
 | `pagefind` | `true` | `false`, or `{ rootSelector, excludeSelectors }`. Skipped with a warning if `pagefind` isn't installed |
 | `outputDir` | `'_askstatic'` | Folder inside the build output |
-| `thresholds` | | `{ minCoverage, minScore, gap, maxCandidates }`: tune the answer / clarify / fallback decisions |
+| `thresholds` | | `{ minCoverage, minScore, gap, maxCandidates, longQueryFloor, suggestUnsure }`: tune the answer / clarify / fallback decisions. `longQueryFloor` (default 0.3) is the lowest word-match share accepted for a long message; `suggestUnsure` (default true) offers the best matches as "did you mean" instead of a dead end when the chat is not sure |
 | `strict` | `false` | Fail the build on warnings |
 
 ### Component props

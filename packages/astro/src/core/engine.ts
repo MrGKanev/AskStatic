@@ -12,9 +12,13 @@ export interface Thresholds {
   /** Candidates within this fraction of the top score count as "close". */
   gap: number;
   maxCandidates: number;
+  /** Lowest coverage accepted for a long message. Short questions need `minCoverage`; every extra word beyond five lowers the bar by 0.04 down to this floor. */
+  longQueryFloor: number;
+  /** When unsure, offer the best matches as "did you mean" instead of a dead end. */
+  suggestUnsure: boolean;
 }
 
-export const defaultThresholds: Thresholds = { minCoverage: 0.6, minScore: 2, gap: 0.25, maxCandidates: 3 };
+export const defaultThresholds: Thresholds = { minCoverage: 0.6, minScore: 2, gap: 0.25, maxCandidates: 3, longQueryFloor: 0.3, suggestUnsure: true };
 
 export interface Candidate {
   entry: Entry;
@@ -79,6 +83,11 @@ export class Engine {
   private readonly parents = new Map<string, Entry>();
   private readonly exactMap = new Map<string, Entry[]>();
   private readonly termSets = new Map<string, Set<string>>();
+  /** Stemmed term -> in how many entries it occurs, and one surface form to restore it from. The vocabulary the site actually uses. */
+  private readonly df = new Map<string, number>();
+  private readonly surface = new Map<string, string>();
+  /** Raw words the site uses -> in how many entries. Typo repair compares against these, never against stems. */
+  private readonly rawDf = new Map<string, number>();
 
   constructor(language: string, entries: Entry[], mini: MiniSearch<Doc>, thresholds: Partial<Thresholds> = {}) {
     this.language = language;
@@ -98,8 +107,67 @@ export class Engine {
         if (!list.includes(e)) list.push(e);
         this.exactMap.set(key, list);
       }
-      this.termSets.set(e.id, new Set(indexTerms(docText(e), this.lang)));
+      const own = new Set(indexTerms(docText(e), this.lang));
+      this.termSets.set(e.id, own);
+      for (const t of own) this.df.set(t, (this.df.get(t) ?? 0) + 1);
+      const words = new Set(tokenize(docText(e)));
+      for (const raw of words) {
+        if (!this.surface.has(this.stemOf(raw))) this.surface.set(this.stemOf(raw), raw);
+        this.rawDf.set(raw, (this.rawDf.get(raw) ?? 0) + 1);
+      }
     }
+  }
+
+  private stemOf(raw: string): string {
+    return this.lang.negations.has(raw) ? raw : this.lang.stem(raw);
+  }
+
+  private known(raw: string): boolean {
+    if (this.lang.stopwords.has(raw) || this.lang.negations.has(raw) || this.df.has(this.stemOf(raw)) || isNumeric(raw)) return true;
+    // The search itself matches word beginnings ("docs" finds "documentation"), so a beginning of a site word is a real word too.
+    const stem = this.stemOf(raw);
+    if (raw.length >= 3) for (const word of this.rawDf.keys()) if (word.startsWith(raw) || (stem.length >= 3 && word.startsWith(stem))) return true;
+    return false;
+  }
+
+  /**
+   * Repairs careless typing before searching: "Doyou" -> "do you", "writeabout" -> "write about", "wokr" -> "work", "yu" -> "you".
+   * Only words the site never uses are touched, and only toward words it (or the language) does use, so real vocabulary is never rewritten.
+   */
+  private repair(tokens: string[]): string[] {
+    const out: string[] = [];
+    for (const t of tokens) {
+      if (t.length < 2 || this.known(t) || /\p{N}/u.test(t)) { out.push(t); continue; }
+      // 1) two known words typed together
+      let best: [string, string] | undefined;
+      let bestScore = -1;
+      for (let i = 2; i <= t.length - 2; i++) {
+        const a = t.slice(0, i);
+        const b = t.slice(i);
+        if (!this.known(a) || !this.known(b)) continue;
+        const score = Math.min(a.length, b.length) * 100 + (this.df.get(this.stemOf(a)) ?? 5) + (this.df.get(this.stemOf(b)) ?? 5);
+        if (score > bestScore) { bestScore = score; best = [a, b]; }
+      }
+      if (best && Math.min(best[0].length, best[1].length) >= 2) { out.push(...best); continue; }
+      // 2) one slip (dropped, doubled, wrong or swapped letter) away from a word the language ignores or the site uses
+      let fix: string | undefined;
+      for (const w of this.lang.stopwords) {
+        // A one-letter slip away from a word the language ignores: "wat" -> "what", "yu" -> "you", but never "dog" -> "do".
+        if (this.lang.negations.has(w) || w.length < 3) continue;
+        if (w[0] === t[0] && Math.abs(w.length - t.length) <= 1 && editsWithin1(t, w)) { fix = w; break; }
+      }
+      // Typos keep their first letter, which also keeps "bread" from becoming "read" and "bake" from becoming "take".
+      // Four-letter words are only repaired when two neighbouring letters were swapped ("wokr" -> "work").
+      if (!fix && t.length >= 4) {
+        let bestDf = 0;
+        for (const [word, count] of this.rawDf) {
+          if (count <= bestDf || word[0] !== t[0] || Math.abs(word.length - t.length) > 1) continue;
+          if (t.length === 4 ? swapped(t, word) : editsWithin1(t, word)) { bestDf = count; fix = word; }
+        }
+      }
+      out.push(fix ?? t);
+    }
+    return out;
   }
 
   get(id: string): Entry | undefined {
@@ -124,7 +192,9 @@ export class Engine {
 
   private retrieveOnce(query: string): Retrieval {
     const lang = this.lang;
-    const raw = tokenize(query);
+    let text = query;
+    for (const re of lang.framePhrases ?? []) text = text.replace(re, ' ');
+    const raw = this.repair(tokenize(text));
     const hasNegation = raw.some((t) => lang.negations.has(t));
     const terms = raw.filter((t) => !lang.stopwords.has(t)).map((t) => (lang.negations.has(t) ? t : lang.stem(t)));
 
@@ -159,6 +229,26 @@ export class Engine {
   toJSON(): SerializedEngine {
     return { version: 1, language: this.language, entries: this.entries, index: this.mini.toJSON() };
   }
+}
+
+/** True when a and b differ by at most one insertion, deletion, substitution or adjacent swap. */
+function editsWithin1(a: string, b: string): boolean {
+  if (a === b) return true;
+  if (Math.abs(a.length - b.length) > 1) return false;
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  if (a.length === b.length) {
+    if (a.slice(i + 1) === b.slice(i + 1)) return true;
+    return a[i] === b[i + 1] && a[i + 1] === b[i] && a.slice(i + 2) === b.slice(i + 2);
+  }
+  return a.length > b.length ? a.slice(i + 1) === b.slice(i) : b.slice(i + 1) === a.slice(i);
+}
+
+function swapped(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let i = 0;
+  while (i < a.length && a[i] === b[i]) i++;
+  return i < a.length - 1 && a[i] === b[i + 1] && a[i + 1] === b[i] && a.slice(i + 2) === b.slice(i + 2);
 }
 
 function isMostlyLatin(text: string): boolean {

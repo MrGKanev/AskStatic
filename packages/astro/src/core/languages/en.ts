@@ -10,7 +10,8 @@ const stopwords = new Set(
    kind kinds type types sort sorts way ways thing things stuff many lot lots bit couple few some any anyone someone
    like really actually just also very quite looking interested wondering curious hello hey hi thanks thank
    take takes happen happened happens post posts article articles
-   have has had having write writes wrote written writing`.split(/\s+/),
+   have has had having write writes wrote written writing
+   asap pls plz thx ok okay going up`.split(/\s+/),
 );
 
 const negations = new Set(
@@ -70,4 +71,14 @@ const synonyms = [
   ['small', 'quick', 'short', 'brief', 'minor', 'tiny'],
 ] as const;
 
-export const en: LanguagePack = { code: 'en', stopwords, negations, stem, synonyms };
+const framePhrases = [
+  /^\s*(?:hi|hey|hello|dear|good (?:morning|afternoon|evening))\b[^,.!?]{0,20}[,!.]\s*/i,
+  /\bquick question\b/gi,
+  /\b(?:i was|i am|i'm) (?:just )?wondering (?:if|whether|about)?\b/gi,
+  /\bjust (?:wondering|curious)\b/gi,
+  /\bby the way\b/gi,
+  /\bthanks?(?: in advance| a lot| so much)?\b/gi,
+  /\bhi there\b/gi,
+];
+
+export const en: LanguagePack = { code: 'en', stopwords, negations, stem, synonyms, framePhrases };

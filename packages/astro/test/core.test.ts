@@ -261,3 +261,63 @@ describe('indexAnswer', () => {
     expect(r.type === 'answer' && r.entry.id).toBe('os');
   });
 });
+
+describe('query repair', () => {
+  const e = (id: string, title: string, questions: string[], keywords: string[] = []) =>
+    ({ id, language: 'en', title, questions, keywords, answer: 'x', sources: [], suggested: false, followUps: [], weight: 1, indexAnswer: true }) as never;
+  const kb = validateKnowledge([
+    e('reading', 'Reading list', ['What books have you read?'], ['books', 'reading']),
+    e('agencies', 'Agencies', ['Do you work with agencies?'], ['agency', 'agencies']),
+    e('reviews', 'Code reviews', ['Do you do code reviews?'], ['review', 'reviews']),
+    e('jobs', 'Current job', ['Where do you work?'], ['job', 'employer']),
+  ]);
+  if (!kb.ok) throw new Error('fixture invalid');
+  const engine = createEngine(kb.entries, 'en');
+  const id = (q: string) => { const r = respond(engine, initialState(), { type: 'text', text: q }).reply; return r.type === 'answer' ? r.entry.id : r.type; };
+
+  it('splits two words typed together', () => {
+    expect(id('Do you wokr with agencies')).toBe('agencies');
+    expect(id('Doyou work with agencies?')).toBe('agencies');
+    expect(id('whatbooks have you read')).toBe('reading');
+  });
+
+  it('fixes a one-letter slip in a word of the site and in a filler word', () => {
+    expect(id('Do you do code reveiws?')).toBe('reviews');
+    expect(id('wat books have yu read')).toBe('reading');
+  });
+
+  it('ignores greetings and thanks around a question', () => {
+    expect(id('hi gabo, what books have you read? thx')).toBe('reading');
+    expect(id('quick question, do you work with agencies asap')).toBe('agencies');
+  });
+
+  it('does not turn a real but unknown word into a site word', () => {
+    expect(id('how do I bake bread')).toBe('fallback'); // not "read"
+    expect(id('tell me a joke')).toBe('fallback'); // not "job"
+    expect(id('what should I name my dog')).toBe('fallback'); // not the stop word "do"
+  });
+});
+
+describe('unsure and long messages', () => {
+  const e = (id: string, title: string, questions: string[], keywords: string[]) =>
+    ({ id, language: 'en', title, questions, keywords, answer: 'x', sources: [], suggested: false, followUps: [], weight: 1, indexAnswer: true }) as never;
+  const kb = validateKnowledge([
+    e('skills', 'Skills', ['What are your skills?'], ['skills', 'product', 'experiments', 'analytics', 'leadership', 'projects', 'technical']),
+    e('pricing', 'Pricing', ['How much do you charge?'], ['price', 'cost', 'rates']),
+    e('contact', 'Contact', ['How can I contact you?'], ['email', 'contact']),
+  ]);
+  if (!kb.ok) throw new Error('fixture invalid');
+  const engine = createEngine(kb.entries, 'en');
+  const ask = (q: string) => respond(engine, initialState(), { type: 'text', text: q }).reply;
+
+  it('answers a long message whose main topic is clear, even though most of its words are context', () => {
+    const r = ask('Hi, we are a small studio looking for someone who can bridge product thinking and data, running experiments, reading analytics and leading technical projects for our client work this autumn');
+    expect(r.type === 'answer' && r.entry.id).toBe('skills');
+  });
+
+  it('offers its best guess instead of a dead end, but only for a plausible match', () => {
+    const r = ask('what is the price for a technical analytics project with experiments');
+    expect(['answer', 'disambiguate']).toContain(r.type);
+    expect(ask('how do I bake sourdough bread').type).toBe('fallback');
+  });
+});

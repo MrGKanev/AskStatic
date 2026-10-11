@@ -4,3 +4,6 @@ dist
 *.tsbuildinfo
 test-results/
 playwright-report/
+
+# Downloaded public datasets used by eval/bench-dataset.ts (licences differ; never commit)
+packages/astro/eval/.cache/

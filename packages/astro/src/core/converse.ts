@@ -11,7 +11,7 @@ export type Reply =
   | { type: 'start' }
   | { type: 'answer'; entry: Entry; followUps: EntryRef[]; clarification?: Clarification }
   | { type: 'clarify'; entry: Entry; field: string; question: string; choices: Choice[] }
-  | { type: 'disambiguate'; candidates: EntryRef[]; reason: 'ambiguous' | 'negation' | 'number-mismatch' }
+  | { type: 'disambiguate'; candidates: EntryRef[]; reason: 'ambiguous' | 'negation' | 'number-mismatch' | 'unsure' }
   | { type: 'fallback'; reason: 'no-match' | 'low-confidence' | 'clarification-failed' };
 
 export type Input =
@@ -41,6 +41,12 @@ export const initialState = (): ConversationState => ({ fields: {}, last: { type
 const MAX_FAILED_CLARIFICATIONS = 2;
 const MAX_HISTORY = 10;
 const SHORT_QUERY_GAP = 0.35;
+const LONG_AFTER = 5;
+const LONG_STEP = 0.04;
+const LONG_LEAD = 1.5;
+const SUGGEST_COVERAGE = 0.35;
+const SUGGEST_RELATIVE = 0.5;
+const SUGGEST_MIN_SCORE = 30;
 const NEGATION_DOMINANT_COVERAGE = 0.7;
 const NEGATION_DOMINANT_RATIO = 4;
 // English only: other languages keep the strict guard until they have their own pattern.
@@ -88,7 +94,8 @@ function handleText(engine: Engine, state: ConversationState, text: string): Sna
     if (topic && choice) return applyChoice(engine, state, topic, choice);
 
     const fresh = decide(engine, state, text);
-    if (fresh.last.type !== 'fallback') return fresh;
+    // A "not sure, did you mean..." reply is not a new topic: while a clarification is pending it counts as a miss.
+    if (fresh.last.type !== 'fallback' && !(fresh.last.type === 'disambiguate' && fresh.last.reason === 'unsure')) return fresh;
 
     const attempts = state.pending.attempts + 1;
     if (attempts >= MAX_FAILED_CLARIFICATIONS || !topic?.clarification) {
@@ -116,11 +123,29 @@ function decide(engine: Engine, state: Snapshot, text: string): Snapshot {
   const [top] = r.candidates;
   const t = engine.thresholds;
   if (!top) return fallback(state, 'no-match');
-  if (top.coverage < t.minCoverage || top.score < t.minScore) return fallback(state, 'low-confidence');
+  // A long message carries a lot of context ("I run a small shop, my developer left, ..."): requiring 60% of its words to match would reject
+  // almost every real one. The bar falls with length, but then three words must match and the top entry must clearly lead.
+  const contentTerms = r.terms.filter((x) => !engine.lang.negations.has(x)).length;
+  const need = contentTerms <= LONG_AFTER ? t.minCoverage : Math.max(t.longQueryFloor, t.minCoverage - LONG_STEP * (contentTerms - LONG_AFTER));
+  const relaxed = need < t.minCoverage;
+  const second0 = r.candidates[1];
+  const unsure = (): Snapshot => {
+    // Not sure enough to answer, but the best candidates are usually right: offer them instead of a dead end.
+    const offer = t.suggestUnsure ? r.candidates.filter((c) => c.coverage >= SUGGEST_COVERAGE && c.score >= top.score * SUGGEST_RELATIVE).slice(0, t.maxCandidates) : [];
+    if (!offer.length || top.score < SUGGEST_MIN_SCORE) return fallback(state, 'low-confidence');
+    const groups = new Map<string, Entry>();
+    for (const c of offer) {
+      const g = engine.parentOf(c.entry.id) ?? c.entry;
+      if (!groups.has(g.id)) groups.set(g.id, g);
+    }
+    return { topicId: state.topicId, fields: state.fields, last: { type: 'disambiguate', reason: 'unsure', candidates: [...groups.values()].map(ref) } };
+  };
+  if (top.coverage < need || top.score < t.minScore) return unsure();
+  if (relaxed && (top.coverage * contentTerms < 3 || (second0 && top.score < second0.score * LONG_LEAD))) return unsure();
 
   // A bare topic word ("cloudflare", "security") says little about which of several related entries is meant: be quicker to offer the choice.
   const gap = r.terms.length <= 2 ? Math.max(t.gap, SHORT_QUERY_GAP) : t.gap;
-  const close = r.candidates.filter((c) => c.coverage >= t.minCoverage && c.score >= top.score * (1 - gap)).slice(0, t.maxCandidates);
+  const close = r.candidates.filter((c) => c.coverage >= need && c.score >= top.score * (1 - gap)).slice(0, t.maxCandidates);
 
   // Siblings of one clarification topic count as a single candidate: ask the clarifying question.
   const groups = new Map<string, Entry>();

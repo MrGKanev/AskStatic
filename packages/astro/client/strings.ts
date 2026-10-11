@@ -15,6 +15,7 @@ export interface Strings {
   negationNote: string;
   numberNote: string;
   noMatch: string;
+  notSure: string;
   clarificationFailed: string;
   siteResults: string;
   searching: string;
@@ -49,6 +50,7 @@ const en: Strings = {
   negationNote: 'I can’t reliably handle negations. Is this what you meant?',
   numberNote: 'I couldn’t find that exact number or version. Is this close to what you need?',
   noMatch: 'I don’t have an answer for that.',
+  notSure: 'I’m not sure I understood. Did you mean one of these?',
   clarificationFailed: 'I couldn’t narrow it down.',
   siteResults: 'These pages might help:',
   searching: 'Searching the site…',
@@ -81,6 +83,7 @@ const bg: Strings = {
   negationNote: 'Не мога надеждно да обработвам отрицания. Това ли имахте предвид?',
   numberNote: 'Не намерих това число или версия. Близо ли е до нужното?',
   noMatch: 'Нямам отговор на това.',
+  notSure: 'Не съм сигурен, че разбрах. Имахте ли предвид някое от тези?',
   clarificationFailed: 'Не успях да уточня.',
   siteResults: 'Тези страници може да помогнат:',
   searching: 'Търсене в сайта…',
