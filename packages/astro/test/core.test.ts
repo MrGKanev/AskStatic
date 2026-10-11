@@ -246,3 +246,18 @@ describe('matching quality', () => {
     expect(r.type === 'answer' && r.entry.id).toBe('phone');
   });
 });
+
+describe('indexAnswer', () => {
+  const e = (id: string, title: string, questions: string[], answer: string, extra: Record<string, unknown> = {}) =>
+    ({ id, language: 'en', title, questions, keywords: [], answer, sources: [], suggested: false, followUps: [], weight: 1, indexAnswer: true, ...extra }) as never;
+  it('does not match on words that only occur in the answer of an entry that opts out', () => {
+    const kb = validateKnowledge([
+      e('gear', 'Home hardware', ['What hardware do you have?'], 'A router, a NAS and a Raspberry Pi running Home Assistant OS.', { indexAnswer: false }),
+      e('os', 'Operating system', ['Which OS do you use?'], 'macOS.'),
+    ]);
+    if (!kb.ok) throw new Error('fixture invalid');
+    const engine = createEngine(kb.entries, 'en');
+    const r = respond(engine, initialState(), { type: 'text', text: 'what os is it' }).reply;
+    expect(r.type === 'answer' && r.entry.id).toBe('os');
+  });
+});

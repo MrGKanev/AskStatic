@@ -1,6 +1,6 @@
 {
   "name": "astro-integration-askstatic",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Static, model-free chat search for Astro sites: answers, clarifying questions and source links, generated at build time.",
   "license": "MIT",
   "type": "module",
@@ -51,11 +51,11 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^26.6.5",
     "astro": "^7.3.8",
     "pagefind": "^1.5.2",
-    "typescript": "^5.9.0",
-    "vitest": "^3.0.0"
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
   },
   "publishConfig": {
     "access": "public"

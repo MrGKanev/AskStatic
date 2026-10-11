@@ -26,7 +26,9 @@ Not started, in the order we want to do them. Details in `ONBOARDING-PLAN.md`.
 
 1. **Feedback loop for unanswered questions.** Capture questions that fell back or had low confidence (local by default, owner webhook as an opt-in), review them with a command, and turn a reviewed question into a new example question or entry in one step. This is what makes the vocabulary grow from real visitors instead of from guesses.
 2. **Offline LLM authoring helper (local script, never part of the site).** A command run by hand (e.g. `askstatic suggest`) that talks to a local model (Ollama) or an API key the owner provides and only *proposes*: new entries from site content, paraphrased example questions, synonym candidates, eval questions. Every proposal is reviewed and approved by a human before it is written; nothing is sent anywhere without a dry-run; unchanged pages are skipped by content hash. It cannot be fully unattended: answers are statements about the owner's business (prices, availability), and a model may invent them.
-3. **Real eval set.** Replace the author-written questions (`gkanev.com/src/askstatic/_eval/en.json`, `packages/astro/eval/`) with real visitor questions collected via item 1, and gate CI on it.
+3. **Generated eval sets, no human author.** Plan, dataset shortlist (CLINC150, Banking77, MFAQ, ...) and generator design in `EVAL-GENERATION-PLAN.md`; then a **real eval set** from visitor questions.
+
+   (older wording follows) **Real eval set.** Replace the author-written questions (`gkanev.com/src/askstatic/_eval/en.json`, `packages/astro/eval/`) with real visitor questions collected via item 1, and gate CI on it.
 4. **Cloudflare `Did you mean` quality, Bulgarian Pagefind quality, phone/screen-reader checks** (see Known gaps).
 
 ## Matching quality (2026-10-11)

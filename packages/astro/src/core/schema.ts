@@ -41,6 +41,8 @@ export const entrySchema = z
     clarification: clarificationSchema.optional(),
     /** Offer this entry as a starter suggestion when the chat opens. If no entry sets it, the first few are used. */
     suggested: z.boolean().default(false),
+    /** Set false for long generated lists whose incidental words would cause false matches; the entry is then found through its title, questions and keywords only. */
+    indexAnswer: z.boolean().default(true),
     /** Ranking prior. Hand-written hub entries stay at 1; bulk-generated entries (one per blog post) should use less so they do not outrank them. */
     weight: z.number().min(0.1).max(2).default(1),
     /** Ids of entries offered as next questions after this answer. */

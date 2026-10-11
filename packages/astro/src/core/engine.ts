@@ -194,7 +194,7 @@ function toDoc(e: Entry, lang: LanguagePack): Doc {
     title: e.title,
     questions: e.questions.join(' \n '),
     keywords: [...e.keywords, ...expandKeywords(e, lang)].join(' '),
-    answer: e.answer ?? '',
+    answer: e.indexAnswer ? (e.answer ?? '') : '',
   };
 }
 

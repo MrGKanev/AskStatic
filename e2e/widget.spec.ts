@@ -90,14 +90,16 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
-test('touch targets: main controls 44px, chips and links at least 32px (WCAG 2.2 AA asks for 24px)', async ({ page }) => {
+test('touch targets: main controls 44px, header buttons 40px, chips and links at least 32px (WCAG 2.2 AA asks for 24px)', async ({ page }) => {
   await openChat(page);
   await ask(page, 'How do I install it?');
   await expect(page.locator('ask-static .chip').first()).toBeVisible();
   const heightOf = (sel: string, min: number) =>
     page.locator(sel).evaluateAll((els, m) => els.filter((e) => e.getBoundingClientRect().height > 0 && e.getBoundingClientRect().height < m).map((e) => `${e.tagName}.${e.className}:${Math.round(e.getBoundingClientRect().height)}`), min);
-  expect(await heightOf('ask-static .send, ask-static .close, ask-static input, ask-static .launcher', 43.5)).toEqual([]);
+  expect(await heightOf('ask-static .send, ask-static input, ask-static .launcher', 43.5)).toEqual([]);
+  expect(await heightOf('ask-static .hbtn', 39.5)).toEqual([]);
   expect(await heightOf('ask-static .chip, ask-static .tool, ask-static a.src', 31.5)).toEqual([]);
+  expect(await heightOf('ask-static .suggest button', 37.5)).toEqual([]);
 });
 
 test('320px wide: no horizontal scroll and the panel fits the viewport', async ({ page }) => {
@@ -127,7 +129,7 @@ test('no content is injected as HTML', async ({ page }) => {
 
 test('clear chat removes the conversation and the saved session', async ({ page }) => {
   await openChat(page);
-  await expect(page.locator('ask-static [aria-label="Clear chat"]')).toBeHidden();
+  await expect(page.locator('ask-static [aria-label="Clear chat"]')).toBeDisabled();
   await ask(page, 'Does it use AI?');
   await expect(page.locator('ask-static .row.user')).toHaveCount(1);
   await page.locator('ask-static [aria-label="Clear chat"]').click();
@@ -145,4 +147,13 @@ test('the open chat survives a page navigation', async ({ page }) => {
   await page.goto('/pricing/');
   await expect(panel(page)).toBeVisible();
   await expect(page.locator('ask-static .row.user')).toHaveCount(1);
+});
+
+test('opening screen lists suggested topics, a formatted greeting and a notice', async ({ page }) => {
+  await openChat(page);
+  await expect(page.locator('ask-static .suggest button').first()).toBeVisible();
+  expect(await page.locator('ask-static .suggest button').count()).toBeGreaterThan(2);
+  await page.locator('ask-static .suggest button').first().click();
+  await expect(page.locator('ask-static .row.user')).toHaveCount(1);
+  await expect(page.locator('ask-static .suggest')).toHaveCount(0);
 });

@@ -6,10 +6,16 @@ export interface Props {
   title?: string;
   /** Override any UI string, e.g. { placeholder: "Search…" }. */
   labels?: Record<string, string>;
+  /** Banners shown under the header, e.g. a data-protection or rate-limit note. Text supports **bold** and [links](/path/). */
+  notices?: { text: string; tone?: 'info' | 'warning' }[];
+  /** How many suggested topics the opening screen lists (0 to 10, default 6). */
+  starters?: number;
+  /** `icon` (round button, default) or `label` (pill with the title). */
+  launcher?: 'icon' | 'label';
 }
-const { lang, title, labels } = Astro.props;
+const { lang, title, labels, notices, starters, launcher } = Astro.props;
 ---
-<ask-static data-pagefind-ignore data-lang={lang} data-title={title} data-labels={labels ? JSON.stringify(labels) : undefined}></ask-static>
+<ask-static data-pagefind-ignore data-lang={lang} data-title={title} data-labels={labels ? JSON.stringify(labels) : undefined} data-notices={notices ? JSON.stringify(notices) : undefined} data-starters={starters} data-launcher={launcher}></ask-static>
 <script>
   import '../client/widget.ts';
 </script>

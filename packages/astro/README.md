@@ -5,7 +5,7 @@ A chat widget for Astro sites that answers visitors' questions **without a serve
 - **Answers you wrote**, with rich text (paragraphs, lists, **bold**, links) and "you might also ask" follow-ups
 - **Asks one clarifying question** when the answer depends on a detail (platform, plan, scope, …)
 - **Falls back to site search** ([Pagefind](https://pagefind.app/)) when there is no good match, instead of guessing
-- **Looks like a modern assistant**: typing indicator, source cards, starter chips, clear-chat button, light and dark theme that follows your site
+- **Looks like a modern assistant**: coloured header with clear and close buttons, a formatted opening message and a list of suggested topics, source cards, typing indicator, optional notice banners, light and dark theme that follows your site
 - **Accessible**: dialog with managed focus, screen-reader announcements, 44 px targets, keyboard only, `forced-colors` and reduced-motion support, checked with axe (WCAG 2.2 AA)
 - **Small**: about 8.5 KB gzipped on every page; the engine and your knowledge (about 12 KB for a small site) load only when the chat is first opened
 - English and Bulgarian built in (including Latin-typed Bulgarian); other languages through language packs
@@ -71,6 +71,8 @@ Add YAML or JSON files under `src/askstatic/`. A file holds one entry or a list;
       - { label: WordPress, value: wordpress, answerId: installation-wordpress, aliases: [wp] }
 ```
 
+**Optional ranking fields:** `weight` (0.1 to 2, default 1) is a prior for ranking. Give bulk-generated entries, such as one per blog post, a lower weight so they do not outrank hand-written hub entries. `indexAnswer: false` keeps a long generated list out of the search by its answer text, so incidental words in it cannot cause false matches; the entry is still found through its title, questions and keywords.
+
 **Formatting in `answer`:** blank line = new paragraph; lines starting with `- ` or `1. ` make lists; `**bold**`, `` `code` `` and `[text](/path/)` work. Nothing is ever injected as HTML.
 
 **What the build checks:** ids are unique per language; every `answerId` and `followUps` id exists in the same language; no clarification cycles; sources are site paths (`/docs/x/`) or http(s) URLs; internal source links are checked against the built pages. Errors fail the build. Warnings (missing sources, the same example question on two entries, broken links) are printed and fail the build with `strict: true`.
@@ -99,6 +101,9 @@ Add YAML or JSON files under `src/askstatic/`. A file holds one entry or a list;
 ```astro
 <AskStatic
   title="Ask about Acme"
+  starters={6}                 // topics listed on the opening screen (0 to 10)
+  launcher="icon"              // "icon" (round button, default) or "label" (pill with the title)
+  notices={[{ text: 'Answers come from this site. **Do not enter personal data.**', tone: 'warning' }]}
   labels={{
     greeting: 'Hi! Ask me about plans, billing or setup.',
     subtitle: 'Quick answers about Acme',
@@ -108,7 +113,7 @@ Add YAML or JSON files under `src/askstatic/`. A file holds one entry or a list;
 />
 ```
 
-`lang` sets the chat language (default: the page's `<html lang>`). `labels` overrides any UI string: `title`, `subtitle`, `greeting`, `placeholder`, `note`, `send`, `sources`, `followUp`, `back`, `otherTopic`, `clear`, `noMatch`, `didYouMean`, `siteResults`, `leadIns` (short lead-in lines separated by `|`, one per answer; empty to disable), and the rest in `client/strings.ts`.
+`lang` sets the chat language (default: the page's `<html lang>`). `notices` are banners under the header (`tone`: `info` or `warning`; text supports `**bold**` and `[links](/path/)`). The opening `greeting` label supports formatting too, so it can list what the chat can help with as bullets. `labels` overrides any UI string: `title`, `subtitle`, `greeting`, `placeholder`, `note`, `send`, `sources`, `followUp`, `back`, `otherTopic`, `clear`, `noMatch`, `didYouMean`, `siteResults`, `leadIns` (short lead-in lines separated by `|`, one per answer; empty to disable), and the rest in `client/strings.ts`.
 
 ### Theming
 
