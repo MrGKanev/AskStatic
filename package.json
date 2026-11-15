@@ -16,7 +16,7 @@
     "release": "pnpm build && pnpm --filter astro-integration-askstatic publish --access public --no-git-checks"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
-    "@playwright/test": "^1.64.0"
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1"
   }
 }
